@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mini SNS</title>
+</head>
+
+<body>
+
+<h1>Mini SNS</h1>
+
+<input id="username" placeholder="닉네임">
+<br><br>
+
+<textarea id="content" placeholder="글 작성"></textarea>
+<br><br>
+
+<button onclick="post()">글 올리기</button>
+
+<hr>
+
+<div id="posts"></div>
+
+<script>
+
+async function post(){
+
+  const username=document.getElementById("username").value
+  const content=document.getElementById("content").value
+
+  await fetch("/post",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      username:username,
+      content:content
+    })
+  })
+
+  loadPosts()
+}
+
+async function loadPosts(){
+
+  const res=await fetch("/posts")
+  const data=await res.json()
+
+  const posts=document.getElementById("posts")
+  posts.innerHTML=""
+
+  data.forEach(p=>{
+
+    const div=document.createElement("div")
+
+    div.innerHTML=
+    "<b>"+p.username+"</b>: "+p.content
+
+    posts.appendChild(div)
+
+  })
+}
+
+loadPosts()
+
+</script>
+
+</body>
+</html>
