@@ -1,70 +1,854 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>Mini SNS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BDI 백 우울척도 셀프 체크</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0c1021;
+      --surface: rgba(255, 255, 255, 0.08);
+      --surface-strong: rgba(255, 255, 255, 0.14);
+      --line: rgba(255, 255, 255, 0.18);
+      --text: #f7f9ff;
+      --muted: #aeb8d6;
+      --accent: #7c5cff;
+      --accent-2: #16e0bd;
+      --danger: #ff557a;
+      --warning: #ffcf5c;
+      --good: #72f29b;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 12%, rgba(124, 92, 255, 0.42), transparent 30%),
+        radial-gradient(circle at 88% 6%, rgba(22, 224, 189, 0.28), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(255, 85, 122, 0.22), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+      gap: 28px;
+      padding: 42px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.055));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(24px);
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -120px;
+      top: -140px;
+      width: 360px;
+      height: 360px;
+      content: "";
+      border-radius: 999px;
+      background: conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--danger), var(--accent));
+      filter: blur(28px);
+      opacity: 0.38;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #dbe2ff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 6vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.08em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #fff, #b7a8ff 38%, #7ff7df 74%, #ffd6df);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #4fd4ff);
+      color: white;
+      box-shadow: 0 16px 38px rgba(124, 92, 255, 0.35);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 46px rgba(124, 92, 255, 0.46);
+      outline: none;
+    }
+
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+      color: #e9edff;
+    }
+
+    .stats-card {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(9, 13, 31, 0.48);
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 4rem;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+    }
+
+    .mini-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .notice {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255, 207, 92, 0.38);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 207, 92, 0.09);
+      color: #fff6d7;
+    }
+
+    .notice strong {
+      color: #ffe28d;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 24px;
+      align-items: start;
+      margin-top: 28px;
+    }
+
+    .panel,
+    .score-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel {
+      padding: 26px;
+    }
+
+    .instruction {
+      margin: 0 0 22px;
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.08);
+      color: #e9edff;
+    }
+
+    .question {
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .question:first-of-type {
+      border-top: 0;
+      padding-top: 4px;
+    }
+
+    .question-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .question h2 {
+      margin: 0;
+      font-size: clamp(1.15rem, 2vw, 1.45rem);
+      letter-spacing: -0.04em;
+    }
+
+    .question-index {
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.9), rgba(22, 224, 189, 0.72));
+      font-weight: 900;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.055);
+      cursor: pointer;
+      transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124, 92, 255, 0.56);
+      background: rgba(255, 255, 255, 0.095);
+    }
+
+    .option input {
+      width: 20px;
+      height: 20px;
+      margin-top: 3px;
+      accent-color: var(--accent-2);
+    }
+
+    .option:has(input:checked) {
+      border-color: rgba(22, 224, 189, 0.85);
+      background: linear-gradient(135deg, rgba(22, 224, 189, 0.16), rgba(124, 92, 255, 0.14));
+      box-shadow: 0 0 0 1px rgba(22, 224, 189, 0.18) inset;
+    }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 28px;
+      margin-right: 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.13);
+      color: #ffffff;
+      font-size: 0.88rem;
+      font-weight: 900;
+    }
+
+    .score-panel {
+      position: sticky;
+      top: 20px;
+      overflow: hidden;
+    }
+
+    .score-panel-inner {
+      padding: 24px;
+    }
+
+    .score-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .score-number {
+      margin: 8px 0 4px;
+      font-size: 5rem;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.1em;
+    }
+
+    .score-number span {
+      color: var(--muted);
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .result-chip {
+      display: inline-flex;
+      margin: 10px 0 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.11);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .progress-track {
+      height: 12px;
+      overflow: hidden;
+      margin: 18px 0 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--good), var(--warning), var(--danger));
+      transition: width 0.25s ease;
+    }
+
+    .completion {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .score-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .score-actions .button {
+      width: 100%;
+    }
+
+    .scale {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .scale-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      color: #dce3ff;
+      font-size: 0.94rem;
+    }
+
+    .scale-row strong {
+      color: #ffffff;
+    }
+
+    .crisis {
+      padding: 18px 24px;
+      border-top: 1px solid rgba(255, 85, 122, 0.3);
+      background: rgba(255, 85, 122, 0.1);
+      color: #ffe5eb;
+    }
+
+    .crisis strong {
+      color: #ff9fb3;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 28px;
+      }
+
+      .score-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        width: min(100% - 20px, 1120px);
+        padding-top: 20px;
+      }
+
+      .hero,
+      .panel,
+      .score-panel-inner {
+        padding: 20px;
+      }
+
+      .question-header {
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .question h2 {
+        padding-top: 4px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">✨ BDI · Beck Depression Inventory</p>
+        <h1 id="page-title"><span class="gradient-text">백 우울척도</span><br>셀프 체크</h1>
+        <p class="lead">
+          오늘을 포함한 지난 2주 동안의 기분과 행동을 돌아보며 21개 문항에 답해보세요.
+          모든 문항에 답하면 총점과 해석 구간이 즉시 계산됩니다.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#questions">검사 시작하기</a>
+          <button class="button secondary" type="button" id="resetTop">초기화</button>
+        </div>
+      </div>
+      <aside class="stats-card" aria-label="검사 요약">
+        <div>
+          <span class="stat-number">21</span>
+          <p class="mini-note">문항 · 각 0~3점 · 총점 0~63점</p>
+        </div>
+        <p class="mini-note">16번 수면, 18번 식욕 문항은 증가/감소 선택지가 있어도 반드시 하나만 선택합니다.</p>
+      </aside>
+    </section>
 
-<h1>Mini SNS</h1>
+    <div class="notice" role="note">
+      <strong>안내:</strong> 이 웹사이트는 자가 점검을 돕기 위한 화면이며 의학적 진단을 대체하지 않습니다.
+      자살 생각이 있거나 위험하다고 느끼면 즉시 119 또는 112, 자살예방상담전화 109 등 긴급 도움을 요청하세요.
+    </div>
 
-<input id="username" placeholder="닉네임">
-<br><br>
+    <section class="layout">
+      <form class="panel" id="bdiForm">
+        <p class="instruction">
+          이 질문지는 21개의 문항으로 이루어져 있습니다. 각각의 문항에 제시된 문장들을 주의 깊게 읽고,
+          오늘을 포함해서 지난 2주일간 당신의 기분을 가장 잘 표현하는 문장 하나를 선택하세요.
+          한 문항에서 여러 문장이 똑같이 해당된다면 점수가 가장 높은 문장을 선택하십시오.
+        </p>
+        <div id="questions"></div>
+      </form>
 
-<textarea id="content" placeholder="글 작성"></textarea>
-<br><br>
+      <aside class="score-panel" aria-live="polite">
+        <div class="score-panel-inner">
+          <p class="score-label">현재 총점</p>
+          <div class="score-number"><output id="score">0</output><span>/63</span></div>
+          <div class="result-chip" id="result">응답 대기</div>
+          <p class="mini-note" id="resultDescription">모든 문항에 답하면 해석이 표시됩니다.</p>
 
-<button onclick="post()">글 올리기</button>
+          <div class="progress-track" aria-label="응답 진행률">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <p class="completion" id="completion">0/21 문항 완료</p>
 
-<hr>
+          <div class="score-actions">
+            <button class="button" type="button" id="scrollMissing">미응답 문항 찾기</button>
+            <button class="button secondary" type="button" id="resetSide">다시 시작</button>
+          </div>
 
-<div id="posts"></div>
+          <div class="scale" aria-label="점수 해석 기준">
+            <div class="scale-row"><span>0–9점</span><strong>우울하지 않음</strong></div>
+            <div class="scale-row"><span>10–15점</span><strong>가벼운 우울</strong></div>
+            <div class="scale-row"><span>16–23점</span><strong>중등도 우울</strong></div>
+            <div class="scale-row"><span>24–63점</span><strong>심한 우울</strong></div>
+          </div>
+        </div>
+        <div class="crisis">
+          <strong>위기 지원:</strong> 9번 문항에서 1점 이상을 선택했거나 지금 안전하지 않다면 혼자 있지 말고 즉시 주변 사람과 전문가에게 도움을 요청하세요.
+        </div>
+      </aside>
+    </section>
 
-<script>
+    <p class="footer">깔끔하게 체크하고, 결과는 신중하게 해석하세요. 필요하면 전문가와 상담하는 것이 가장 안전합니다.</p>
+  </main>
 
-async function post(){
+  <script>
+    const questions = [
+      {
+        title: "슬픔",
+        options: [
+          [0, "나는 슬프지 않다."],
+          [1, "나는 슬플 때가 자주 있다."],
+          [2, "나는 항상 슬프다."],
+          [3, "나는 너무 슬프고 불행해서 견딜 수가 없다."]
+        ]
+      },
+      {
+        title: "비관주의",
+        options: [
+          [0, "나는 미래에 대해 낙심하지 않는다."],
+          [1, "나는 이전에 비해 미래에 대한 희망이 줄었다."],
+          [2, "나는 내 앞날이 잘 풀릴 것이라고 기대하지 않는다."],
+          [3, "나는 미래가 희망이 없고 점점 더 나빠질 것 같은 느낌이 든다."]
+        ]
+      },
+      {
+        title: "과거의 실패",
+        options: [
+          [0, "나는 나 자신을 실패자라고 느끼지 않는다."],
+          [1, "나는 생각보다 많은 실패를 했다."],
+          [2, "돌이켜보면, 나는 실패를 너무 많이 했다."],
+          [3, "나는 인간으로서 완전히 실패한 것 같다."]
+        ]
+      },
+      {
+        title: "즐거움 상실",
+        options: [
+          [0, "나는 이전처럼 내가 좋아하는 일을 하면서 즐거움을 느낀다."],
+          [1, "나는 이전만큼 일을 즐기지 못하고 있다."],
+          [2, "나는 이전과 달리 일에서 즐거움을 거의 느끼지 못하고 있다."],
+          [3, "나는 이전과 달리 어떤 일에서도 즐거움을 느끼지 못하고 있다."]
+        ]
+      },
+      {
+        title: "죄책감",
+        options: [
+          [0, "나는 특별히 죄책감을 느끼지 않는다."],
+          [1, "나는 내가 했던 일이나 하지 못했던 일 때문에 죄책감을 느낀다."],
+          [2, "나는 죄책감을 느낄 때가 자주 있다."],
+          [3, "나는 항상 죄책감을 느낀다."]
+        ]
+      },
+      {
+        title: "벌 받는 느낌",
+        options: [
+          [0, "나는 벌을 받고 있다고 느끼지 않는다."],
+          [1, "나는 벌을 받을지도 모른다는 느낌이 든다."],
+          [2, "나는 벌을 받을 것 같다."],
+          [3, "나는 지금 벌을 받고 있다는 느낌이 든다."]
+        ]
+      },
+      {
+        title: "자기혐오",
+        options: [
+          [0, "나는 나 자신에 대해 변함없이 같은 느낌이다."],
+          [1, "나는 나 자신에 대한 믿음이 없어졌다."],
+          [2, "나는 나 자신에 대해 실망하고 있다."],
+          [3, "나는 나 자신을 혐오한다."]
+        ]
+      },
+      {
+        title: "자기비판",
+        options: [
+          [0, "나는 이전에 비해 자신을 더 탓하거나 비난하지 않는다."],
+          [1, "나는 이전에 비해 나 자신을 더 많이 탓한다."],
+          [2, "내가 저지른 실수는 다 나의 잘못 때문이라고 생각한다."],
+          [3, "안 좋은 일이 벌어지면 다 나 때문인 것 같아 자신을 비난한다."]
+        ]
+      },
+      {
+        title: "자살 사고 및 자살 소망",
+        options: [
+          [0, "나는 자살 같은 것은 생각하지 않는다."],
+          [1, "나는 자살을 생각해 본 적은 있지만, 행동으로 옮기지는 않을 것이다."],
+          [2, "나는 자살하고 싶다."],
+          [3, "나는 기회만 있으면 자살할 것이다."]
+        ]
+      },
+      {
+        title: "울음",
+        options: [
+          [0, "나는 이전보다 울음이 더 많아지지 않았다."],
+          [1, "나는 이전보다 울음이 더 많아졌다."],
+          [2, "나는 사소한 일에도 울음이 터져 나온다."],
+          [3, "나는 울고 싶어도 울 기력조차 없다."]
+        ]
+      },
+      {
+        title: "초조",
+        options: [
+          [0, "나는 이전보다 더 초조하거나 긴장되지 않는다."],
+          [1, "나는 이전보다 더 초조하고 긴장된다."],
+          [2, "나는 너무 초조해서 가만히 있기가 어렵다."],
+          [3, "나는 너무 초조해서 계속 움직이거나 뭐든 하고 있어야 한다."]
+        ]
+      },
+      {
+        title: "흥미상실",
+        options: [
+          [0, "나는 사람들이나 일에 대한 관심이 변하지 않았다."],
+          [1, "나는 사람들이나 일에 대한 관심이 이전에 비해 줄어들었다."],
+          [2, "나는 사람들이나 일에 대한 관심이 많이 줄어들었다."],
+          [3, "나는 어떤 것에도 관심을 갖기가 힘들다."]
+        ]
+      },
+      {
+        title: "우유부단",
+        options: [
+          [0, "나는 이전처럼 결정을 잘 내린다."],
+          [1, "나는 이전처럼 결정을 내리기가 힘들다."],
+          [2, "나는 이전처럼 결정을 내리는 것이 너무 힘들다."],
+          [3, "나는 어떤 결정도 내리기 힘들다."]
+        ]
+      },
+      {
+        title: "무가치감",
+        options: [
+          [0, "나는 내가 무가치한 사람이라고 느끼지 않는다."],
+          [1, "나는 내가 이전만큼 가치 있고 쓸모 있는 사람이라는 생각이 들지 않는다."],
+          [2, "나는 다른 사람들보다 무가치한 사람이라는 느낌이 든다."],
+          [3, "나는 완전히 무가치한 사람이라는 느낌이 든다."]
+        ]
+      },
+      {
+        title: "기력 상실",
+        options: [
+          [0, "나는 이전에 비해 기력이 떨어지지 않았다."],
+          [1, "나는 이전보다 기력이 떨어졌다."],
+          [2, "나는 기력이 많이 떨어졌다."],
+          [3, "나는 기력이 너무 없어 아무 일도 할 수가 없다."]
+        ]
+      },
+      {
+        title: "수면 양상 변화",
+        options: [
+          [0, "나는 수면 양상에 변화가 없다."],
+          [1, "나는 이전보다 잠이 약간 늘었다."],
+          [1, "나는 이전보다 잠이 약간 줄었다."],
+          [2, "나는 이전보다 잠이 훨씬 늘었다."],
+          [2, "나는 이전보다 잠이 훨씬 줄었다."],
+          [3, "나는 거의 하루 종일 잠을 잔다."],
+          [3, "나는 이전보다 1~2시간 일찍 잠을 깨고, 다시 잠들기 어렵다."]
+        ]
+      },
+      {
+        title: "짜증",
+        options: [
+          [0, "나는 이전에 비해 짜증이 심해지지 않는다."],
+          [1, "나는 이전에 비해 짜증이 약간 늘었다."],
+          [2, "나는 이전에 비해 짜증이 훨씬 심해졌다."],
+          [3, "나는 항상 짜증이 난다."]
+        ]
+      },
+      {
+        title: "식욕 변화",
+        options: [
+          [0, "나는 식욕에 변화가 없다."],
+          [1, "나는 이전에 비해 식욕이 약간 줄었다."],
+          [1, "나는 이전에 비해 식욕이 약간 늘었다."],
+          [2, "나는 이전에 비해 식욕이 많이 줄었다."],
+          [2, "나는 이전에 비해 식욕이 많이 늘었다."],
+          [3, "나는 식욕이 전혀 없다."],
+          [3, "나는 음식에 대한 욕구가 심해졌다."]
+        ]
+      },
+      {
+        title: "주의집중 어려움",
+        options: [
+          [0, "나는 이전처럼 집중을 잘 할 수 있다."],
+          [1, "나는 이전만큼 집중을 잘 할 수 없다."],
+          [2, "나는 어떤 일에도 오래 집중하기가 어렵다."],
+          [3, "나는 어떤 일에도 전혀 집중할 수가 없다."]
+        ]
+      },
+      {
+        title: "피로감",
+        options: [
+          [0, "나는 평소보다 더 피곤하지는 않다."],
+          [1, "나는 평소보다 더 쉽게 피곤해진다."],
+          [2, "나는 너무 피곤해서 이전에 해왔던 많은 일들을 하기 힘들다."],
+          [3, "나는 너무 피곤해서 이전에 해왔던 일들을 아무것도 할 수 없다."]
+        ]
+      },
+      {
+        title: "성(性)에 대한 흥미 상실",
+        options: [
+          [0, "나는 성(性)에 대한 관심이 별다른 변화 없이 유지되고 있다."],
+          [1, "나는 이전에 비해 성(性)에 대한 관심이 줄었다."],
+          [2, "나는 최근에 성(性)에 대한 관심이 상당히 줄었다."],
+          [3, "나는 성(性)에 대한 관심을 완전히 잃었다."]
+        ]
+      }
+    ];
 
-  const username=document.getElementById("username").value
-  const content=document.getElementById("content").value
+    const form = document.getElementById("bdiForm");
+    const questionRoot = document.getElementById("questions");
+    const scoreOutput = document.getElementById("score");
+    const result = document.getElementById("result");
+    const resultDescription = document.getElementById("resultDescription");
+    const completion = document.getElementById("completion");
+    const progressBar = document.getElementById("progressBar");
+    const resetButtons = [document.getElementById("resetTop"), document.getElementById("resetSide")];
+    const missingButton = document.getElementById("scrollMissing");
 
-  await fetch("/post",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      username:username,
-      content:content
-    })
-  })
+    const ranges = [
+      { min: 0, max: 9, label: "우울하지 않음", description: "현재 점수는 우울 수준이 높게 나타나지 않는 범위입니다.", color: "#72f29b" },
+      { min: 10, max: 15, label: "가벼운 우울", description: "가벼운 우울 범위입니다. 휴식, 수면, 주변 지지와 함께 변화를 살펴보세요.", color: "#ffcf5c" },
+      { min: 16, max: 23, label: "중등도 우울", description: "중등도 우울 범위입니다. 지속된다면 전문가 상담을 권장합니다.", color: "#ff9f43" },
+      { min: 24, max: 63, label: "심한 우울", description: "심한 우울 범위입니다. 가능한 한 빠르게 전문가 또는 위기 지원 자원과 연결하세요.", color: "#ff557a" }
+    ];
 
-  loadPosts()
-}
+    function renderQuestions() {
+      questionRoot.innerHTML = questions.map((question, questionIndex) => {
+        const options = question.options.map(([score, text], optionIndex) => {
+          const id = `q${questionIndex}-o${optionIndex}`;
+          return `
+            <label class="option" for="${id}">
+              <input id="${id}" type="radio" name="q${questionIndex}" value="${score}">
+              <span><span class="score-badge">${score}</span>${text}</span>
+            </label>
+          `;
+        }).join("");
 
-async function loadPosts(){
+        return `
+          <section class="question" id="question-${questionIndex + 1}">
+            <div class="question-header">
+              <span class="question-index">${questionIndex + 1}</span>
+              <h2>${question.title}</h2>
+            </div>
+            <div class="options">${options}</div>
+          </section>
+        `;
+      }).join("");
+    }
 
-  const res=await fetch("/posts")
-  const data=await res.json()
+    function getSelectedInputs() {
+      return questions
+        .map((_, index) => form.querySelector(`input[name="q${index}"]:checked`))
+        .filter(Boolean);
+    }
 
-  const posts=document.getElementById("posts")
-  posts.innerHTML=""
+    function interpret(score) {
+      return ranges.find((range) => score >= range.min && score <= range.max) || ranges[0];
+    }
 
-  data.forEach(p=>{
+    function updateScore() {
+      const selected = getSelectedInputs();
+      const score = selected.reduce((sum, input) => sum + Number(input.value), 0);
+      const answered = selected.length;
+      const percentage = (answered / questions.length) * 100;
 
-    const div=document.createElement("div")
+      scoreOutput.value = score;
+      completion.textContent = `${answered}/${questions.length} 문항 완료`;
+      progressBar.style.width = `${percentage}%`;
 
-    div.innerHTML=
-    "<b>"+p.username+"</b>: "+p.content
+      if (answered === questions.length) {
+        const range = interpret(score);
+        result.textContent = range.label;
+        result.style.background = `${range.color}22`;
+        result.style.color = range.color;
+        resultDescription.textContent = range.description;
+      } else {
+        result.textContent = "응답 대기";
+        result.style.background = "rgba(255, 255, 255, 0.11)";
+        result.style.color = "#ffffff";
+        resultDescription.textContent = "모든 문항에 답하면 해석이 표시됩니다.";
+      }
+    }
 
-    posts.appendChild(div)
+    function resetForm() {
+      form.reset();
+      updateScore();
+      document.getElementById("page-title").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 
-  })
-}
+    function scrollToMissing() {
+      const missingIndex = questions.findIndex((_, index) => !form.querySelector(`input[name="q${index}"]:checked`));
+      if (missingIndex === -1) {
+        result.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
 
-loadPosts()
+      document.getElementById(`question-${missingIndex + 1}`).scrollIntoView({ behavior: "smooth", block: "center" });
+    }
 
-</script>
+    renderQuestions();
+    updateScore();
 
+    form.addEventListener("change", updateScore);
+    missingButton.addEventListener("click", scrollToMissing);
+    resetButtons.forEach((button) => button.addEventListener("click", resetForm));
+  </script>
 </body>
 </html>
