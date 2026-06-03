@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실손보험금 계산기</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f2f7ff;
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface-strong: #ffffff;
+      --line: #d8e4f2;
+      --text: #172033;
+      --muted: #64748b;
+      --primary: #246bfe;
+      --primary-dark: #164fc7;
+      --accent: #16b8a6;
+      --accent-soft: #e6fbf8;
+      --warning: #ffb020;
+      --danger: #ef476f;
+      --shadow: 0 24px 70px rgba(31, 74, 135, 0.16);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(36, 107, 254, 0.18), transparent 28%),
+        radial-gradient(circle at 90% 8%, rgba(22, 184, 166, 0.18), transparent 26%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 52%, #edf6ff 100%);
+      color: var(--text);
+      line-height: 1.62;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 56px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 24px;
+      padding: clamp(26px, 5vw, 46px);
+      border: 1px solid rgba(216, 228, 242, 0.86);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.72));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero::after {
+      position: absolute;
+      right: -140px;
+      top: -150px;
+      width: 380px;
+      height: 380px;
+      content: "";
+      border-radius: 999px;
+      background: conic-gradient(from 120deg, rgba(36, 107, 254, 0.45), rgba(22, 184, 166, 0.5), rgba(255, 176, 32, 0.38), rgba(36, 107, 254, 0.45));
+      filter: blur(18px);
+      opacity: 0.65;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+      padding: 8px 12px;
+      border: 1px solid #cae4ff;
+      border-radius: 999px;
+      background: #eef7ff;
+      color: var(--primary-dark);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 18px;
+      font-size: clamp(2.25rem, 6vw, 4.8rem);
+      line-height: 1;
+      letter-spacing: -0.08em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #143f98, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), #4aa8ff);
+      color: #fff;
+      box-shadow: 0 14px 32px rgba(36, 107, 254, 0.28);
+      cursor: pointer;
+      font-weight: 900;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(36, 107, 254, 0.34);
+      outline: none;
+    }
+
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      box-shadow: none;
+      color: var(--primary-dark);
+    }
+
+    .summary-card {
+      display: grid;
+      gap: 14px;
+      align-self: stretch;
+      padding: 22px;
+      border: 1px solid #d7e9ff;
+      border-radius: 24px;
+      background: rgba(246, 251, 255, 0.82);
+    }
+
+    .summary-card h2 {
+      margin-bottom: 2px;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .generation-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #2f3f58;
+      font-size: 0.95rem;
+    }
+
+    .generation-list li {
+      padding: 10px 12px;
+      border: 1px solid #e1edf8;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .generation-list strong {
+      color: var(--primary-dark);
+    }
+
+    .notice {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255, 176, 32, 0.42);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 176, 32, 0.12);
+      color: #61410a;
+    }
+
+    .notice strong {
+      color: #9a6400;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 24px;
+      align-items: start;
+      margin-top: 26px;
+    }
+
+    .panel,
+    .result-panel {
+      border: 1px solid rgba(216, 228, 242, 0.95);
+      border-radius: var(--radius-xl);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel {
+      padding: clamp(20px, 4vw, 30px);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: clamp(1.25rem, 2.6vw, 1.65rem);
+      letter-spacing: -0.05em;
+    }
+
+    .section-title span {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.96rem;
+      font-weight: 950;
+    }
+
+    .control-group {
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .control-group:first-of-type {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .segmented,
+    .cards {
+      display: grid;
+      gap: 10px;
+    }
+
+    .segmented {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cards {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .choice {
+      position: relative;
+      display: block;
+      min-height: 78px;
+      padding: 15px;
+      border: 1px solid #dbe7f5;
+      border-radius: var(--radius-md);
+      background: #fff;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .choice:hover {
+      transform: translateY(-1px);
+      border-color: #9fc2ff;
+    }
+
+    .choice input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    .choice:has(input:checked) {
+      border-color: rgba(36, 107, 254, 0.9);
+      box-shadow: 0 0 0 3px rgba(36, 107, 254, 0.12);
+      background: linear-gradient(135deg, #eef5ff, #ffffff);
+    }
+
+    .choice strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #14213d;
+      font-size: 1rem;
+    }
+
+    .choice span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label.field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .label-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: #2b3b52;
+      font-weight: 850;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap input,
+    select {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 46px 0 14px;
+      border: 1px solid #d8e4f2;
+      border-radius: var(--radius-md);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .input-wrap input:focus,
+    select:focus {
+      border-color: rgba(36, 107, 254, 0.82);
+      box-shadow: 0 0 0 4px rgba(36, 107, 254, 0.12);
+    }
+
+    .unit {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      color: var(--muted);
+      transform: translateY(-50%);
+      font-weight: 800;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .result-panel {
+      position: sticky;
+      top: 18px;
+      overflow: hidden;
+    }
+
+    .result-inner {
+      padding: 26px;
+    }
+
+    .result-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .result-amount {
+      margin: 8px 0 6px;
+      color: var(--primary-dark);
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      word-break: keep-all;
+    }
+
+    .result-caption {
+      margin-bottom: 18px;
+      color: var(--muted);
+    }
+
+    .breakdown {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .breakdown li {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      color: #334155;
+    }
+
+    .breakdown strong {
+      color: #14213d;
+      text-align: right;
+    }
+
+    .formula-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f5f9ff;
+      color: #42526b;
+      font-size: 0.94rem;
+    }
+
+    .disclaimer {
+      padding: 18px 24px;
+      border-top: 1px solid rgba(239, 71, 111, 0.2);
+      background: rgba(239, 71, 111, 0.08);
+      color: #733146;
+      font-size: 0.94rem;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        position: static;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .wrap {
+        width: min(100% - 20px, 1180px);
+        padding-top: 18px;
+      }
+
+      .segmented,
+      .cards,
+      .fields {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">🏥 실손보험 · 예상 보험금</p>
+        <h1 id="page-title"><span class="gradient-text">실손보험금</span><br>계산기</h1>
+        <p class="lead">
+          가입 세대, 통원·입원 구분, 급여 본인부담금과 비급여 금액을 입력하면 약관 기준의 예상 보험금을 바로 계산합니다.
+          실제 지급액은 보험사 심사와 가입 특약에 따라 달라질 수 있습니다.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#calculator">계산 시작하기</a>
+          <button class="button secondary" type="button" id="resetTop">입력 초기화</button>
+        </div>
+      </div>
+      <aside class="summary-card" aria-label="실손보험 세대별 기준">
+        <h2>세대별 기본 보장률</h2>
+        <ul class="generation-list">
+          <li><strong>1세대 ~2009.09</strong> — 100% 보장, 공제 없음 가정</li>
+          <li><strong>2세대 2009.10~2017.03</strong> — 공제 후 90% 보장</li>
+          <li><strong>3세대 2017.04~2021.06</strong> — 공제 후 80% 보장</li>
+          <li><strong>4세대 2021.07~</strong> — 급여 80% / 비급여 70%</li>
+        </ul>
+      </aside>
+    </section>
+
+    <div class="notice" role="note">
+      <strong>통원 공제:</strong> 의원 1만원, 병원·종합병원 1.5만원, 상급종합병원 2만원을 적용합니다.
+      1세대는 공제 없음으로 계산하되, 일부 초기 상품은 별도 공제가 있을 수 있습니다.
+    </div>
+
+    <section class="layout" id="calculator">
+      <form class="panel" id="calculatorForm">
+        <div class="control-group">
+          <h2 class="section-title"><span>1</span>가입 세대 선택</h2>
+          <div class="cards" role="radiogroup" aria-label="가입 세대">
+            <label class="choice">
+              <input type="radio" name="generation" value="gen1" checked>
+              <strong>1세대</strong>
+              <span>~2009.09<br>100% 보장 · 공제 없음 가정</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="generation" value="gen2">
+              <strong>2세대</strong>
+              <span>2009.10~2017.03<br>공제 후 90%</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="generation" value="gen3">
+              <strong>3세대</strong>
+              <span>2017.04~2021.06<br>공제 후 80% · 비급여 특약 포함 가정</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="generation" value="gen4">
+              <strong>4세대</strong>
+              <span>2021.07~<br>급여 80% / 비급여 70%</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h2 class="section-title"><span>2</span>진료 구분</h2>
+          <div class="segmented" role="radiogroup" aria-label="통원 또는 입원">
+            <label class="choice">
+              <input type="radio" name="visitType" value="outpatient" checked>
+              <strong>통원 (외래)</strong>
+              <span>의료기관별 통원 공제를 적용합니다.</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="visitType" value="inpatient">
+              <strong>입원</strong>
+              <span>입원비 입력값에 보장률을 적용합니다.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="control-group" id="deductibleGroup">
+          <h2 class="section-title"><span>3</span>통원 공제 선택</h2>
+          <div class="cards" role="radiogroup" aria-label="통원 공제">
+            <label class="choice">
+              <input type="radio" name="facility" value="clinic" checked>
+              <strong>의원</strong>
+              <span>공제 1만원</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="facility" value="hospital">
+              <strong>병원·종합병원</strong>
+              <span>공제 1.5만원</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="facility" value="tertiary">
+              <strong>상급종합병원</strong>
+              <span>공제 2만원</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="control-group" id="outpatientFields">
+          <h2 class="section-title"><span>4</span>통원 진료비 입력</h2>
+          <div class="fields">
+            <label class="field full">
+              <span class="label-line">진료비 금액 <span class="hint">영수증 총액 확인용</span></span>
+              <span class="input-wrap">
+                <input type="number" id="outpatientTotal" min="0" step="100" inputmode="numeric" placeholder="예: 120000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+            <label class="field">
+              <span class="label-line">급여 본인부담금 <span class="hint">건강보험 적용 후 본인이 낸 금액</span></span>
+              <span class="input-wrap">
+                <input type="number" id="outpatientCovered" min="0" step="100" inputmode="numeric" placeholder="예: 30000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+            <label class="field">
+              <span class="label-line">비급여 금액 <span class="hint">건강보험 미적용 항목 합계</span></span>
+              <span class="input-wrap">
+                <input type="number" id="outpatientUncovered" min="0" step="100" inputmode="numeric" placeholder="예: 70000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+            <label class="field">
+              <span class="label-line">약제비 급여 <span class="hint">처방조제 급여 본인부담 · 선택 입력</span></span>
+              <span class="input-wrap">
+                <input type="number" id="medicineCovered" min="0" step="100" inputmode="numeric" placeholder="예: 8000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="control-group hidden" id="inpatientFields">
+          <h2 class="section-title"><span>4</span>입원 진료비 입력</h2>
+          <div class="fields">
+            <label class="field">
+              <span class="label-line">급여 본인부담금 <span class="hint">건강보험 적용 후 본인이 낸 금액</span></span>
+              <span class="input-wrap">
+                <input type="number" id="inpatientCovered" min="0" step="100" inputmode="numeric" placeholder="예: 600000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+            <label class="field">
+              <span class="label-line">비급여 금액 <span class="hint">건강보험 미적용 항목 합계</span></span>
+              <span class="input-wrap">
+                <input type="number" id="inpatientUncovered" min="0" step="100" inputmode="numeric" placeholder="예: 1200000">
+                <span class="unit">원</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="button" type="button" id="sampleButton">예시 금액 넣기</button>
+          <button class="button secondary" type="button" id="resetBottom">초기화</button>
+        </div>
+      </form>
+
+      <aside class="result-panel" aria-live="polite">
+        <div class="result-inner">
+          <p class="result-label">예상 수령 보험금</p>
+          <div class="result-amount" id="estimatedAmount">0원</div>
+          <p class="result-caption" id="resultCaption">금액을 입력하면 즉시 계산됩니다.</p>
+
+          <ul class="breakdown" aria-label="계산 상세">
+            <li><span>입력 합계</span><strong id="eligibleTotal">0원</strong></li>
+            <li><span>적용 공제</span><strong id="deductibleAmount">0원</strong></li>
+            <li><span>적용 보장률</span><strong id="rateLabel">100%</strong></li>
+            <li><span>본인 부담 추정</span><strong id="selfPayAmount">0원</strong></li>
+          </ul>
+
+          <div class="formula-box" id="formulaText">
+            1세대는 입력한 급여·비급여·약제비 합계를 100% 보장으로 계산합니다.
+          </div>
+        </div>
+        <div class="disclaimer">
+          약관 기반 추정금액임. 실제 금액은 가입 상품의 특약 구성·자기부담 한도·연간 한도에 따라 달라질 수 있습니다.
+        </div>
+      </aside>
+    </section>
+
+    <p class="footer">보험금 청구 전에는 보험증권, 약관, 진료비 영수증, 세부내역서를 함께 확인하세요.</p>
+  </main>
+
+  <script>
+    const form = document.getElementById("calculatorForm");
+    const deductibleGroup = document.getElementById("deductibleGroup");
+    const outpatientFields = document.getElementById("outpatientFields");
+    const inpatientFields = document.getElementById("inpatientFields");
+    const estimatedAmount = document.getElementById("estimatedAmount");
+    const resultCaption = document.getElementById("resultCaption");
+    const eligibleTotal = document.getElementById("eligibleTotal");
+    const deductibleAmount = document.getElementById("deductibleAmount");
+    const rateLabel = document.getElementById("rateLabel");
+    const selfPayAmount = document.getElementById("selfPayAmount");
+    const formulaText = document.getElementById("formulaText");
+    const resetButtons = [document.getElementById("resetTop"), document.getElementById("resetBottom")];
+    const sampleButton = document.getElementById("sampleButton");
+
+    const generationRules = {
+      gen1: { label: "1세대", rate: 1, coveredRate: 1, uncoveredRate: 1 },
+      gen2: { label: "2세대", rate: 0.9, coveredRate: 0.9, uncoveredRate: 0.9 },
+      gen3: { label: "3세대", rate: 0.8, coveredRate: 0.8, uncoveredRate: 0.8 },
+      gen4: { label: "4세대", rate: null, coveredRate: 0.8, uncoveredRate: 0.7 }
+    };
+
+    const facilityDeductibles = {
+      clinic: 10000,
+      hospital: 15000,
+      tertiary: 20000
+    };
+
+    const currency = new Intl.NumberFormat("ko-KR", {
+      style: "currency",
+      currency: "KRW",
+      maximumFractionDigits: 0
+    });
+
+    function selectedValue(name) {
+      return form.querySelector(`input[name="${name}"]:checked`).value;
+    }
+
+    function numberValue(id) {
+      const value = Number(document.getElementById(id).value);
+      return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    function won(value) {
+      return currency.format(Math.max(0, Math.round(value))).replace("₩", "") + "원";
+    }
+
+    function applyDeductibleByRatio(covered, uncovered, deductible) {
+      const total = covered + uncovered;
+      if (total <= 0 || deductible <= 0) {
+        return { coveredAfter: covered, uncoveredAfter: uncovered, appliedDeductible: 0 };
+      }
+
+      const appliedDeductible = Math.min(total, deductible);
+      const coveredDeductible = appliedDeductible * (covered / total);
+      const uncoveredDeductible = appliedDeductible * (uncovered / total);
+
+      return {
+        coveredAfter: Math.max(0, covered - coveredDeductible),
+        uncoveredAfter: Math.max(0, uncovered - uncoveredDeductible),
+        appliedDeductible
+      };
+    }
+
+    function calculate() {
+      const generation = selectedValue("generation");
+      const visitType = selectedValue("visitType");
+      const rule = generationRules[generation];
+      const isOutpatient = visitType === "outpatient";
+      const deductible = isOutpatient && generation !== "gen1" ? facilityDeductibles[selectedValue("facility")] : 0;
+      const covered = isOutpatient
+        ? numberValue("outpatientCovered") + numberValue("medicineCovered")
+        : numberValue("inpatientCovered");
+      const uncovered = isOutpatient ? numberValue("outpatientUncovered") : numberValue("inpatientUncovered");
+      const total = covered + uncovered;
+      const afterDeductible = applyDeductibleByRatio(covered, uncovered, deductible);
+      const reimbursed = generation === "gen4"
+        ? (afterDeductible.coveredAfter * rule.coveredRate) + (afterDeductible.uncoveredAfter * rule.uncoveredRate)
+        : (afterDeductible.coveredAfter + afterDeductible.uncoveredAfter) * rule.rate;
+      const selfPay = Math.max(0, total - reimbursed);
+
+      estimatedAmount.textContent = won(reimbursed);
+      eligibleTotal.textContent = won(total);
+      deductibleAmount.textContent = won(afterDeductible.appliedDeductible);
+      selfPayAmount.textContent = won(selfPay);
+
+      if (generation === "gen4") {
+        rateLabel.textContent = "급여 80% / 비급여 70%";
+        formulaText.textContent = `${rule.label} ${isOutpatient ? "통원" : "입원"}: 공제 후 남은 금액을 급여와 비급여 비중으로 나누어 급여 80%, 비급여 70%를 적용했습니다.`;
+      } else {
+        rateLabel.textContent = `${Math.round(rule.rate * 100)}%`;
+        formulaText.textContent = `${rule.label} ${isOutpatient ? "통원" : "입원"}: 입력 합계에서 적용 공제를 뺀 뒤 ${Math.round(rule.rate * 100)}% 보장률을 적용했습니다.`;
+      }
+
+      if (total <= 0) {
+        resultCaption.textContent = "금액을 입력하면 즉시 계산됩니다.";
+      } else if (afterDeductible.appliedDeductible >= total) {
+        resultCaption.textContent = "입력 합계가 적용 공제 이하라 예상 수령액이 0원입니다.";
+      } else {
+        resultCaption.textContent = `${rule.label} · ${isOutpatient ? "통원" : "입원"} 기준 예상 금액입니다.`;
+      }
+    }
+
+    function toggleVisitType() {
+      const isOutpatient = selectedValue("visitType") === "outpatient";
+      deductibleGroup.classList.toggle("hidden", !isOutpatient);
+      outpatientFields.classList.toggle("hidden", !isOutpatient);
+      inpatientFields.classList.toggle("hidden", isOutpatient);
+      calculate();
+    }
+
+    function resetForm() {
+      form.reset();
+      toggleVisitType();
+      document.getElementById("page-title").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function fillSample() {
+      document.querySelector('input[name="generation"][value="gen4"]').checked = true;
+      document.querySelector('input[name="visitType"][value="outpatient"]').checked = true;
+      document.querySelector('input[name="facility"][value="hospital"]').checked = true;
+      document.getElementById("outpatientTotal").value = 128000;
+      document.getElementById("outpatientCovered").value = 30000;
+      document.getElementById("outpatientUncovered").value = 90000;
+      document.getElementById("medicineCovered").value = 8000;
+      toggleVisitType();
+      document.getElementById("calculator").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    form.addEventListener("input", calculate);
+    form.addEventListener("change", toggleVisitType);
+    resetButtons.forEach((button) => button.addEventListener("click", resetForm));
+    sampleButton.addEventListener("click", fillSample);
+    toggleVisitType();
+  </script>
+</body>
+            </html>
