@@ -3,86 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>수능 영어 모의고사 OMR</title>
+  <title>수능 영어 모의평가 응시 사이트</title>
   <style>
     :root {
       color-scheme: light;
       --ink: #111827;
-      --muted: #64748b;
-      --soft: #f8fafc;
-      --paper: #ffffff;
-      --line: #dbe4ef;
-      --line-strong: #94a3b8;
-      --brand: #1d4ed8;
-      --brand-dark: #173b8f;
-      --accent: #f59e0b;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
-      --radius-xl: 28px;
-      --radius-lg: 18px;
-      --radius-md: 12px;
+      --muted: #5b677a;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --line: #cfdae8;
+      --line-dark: #182033;
+      --teal: #0596a6;
+      --teal-dark: #087284;
+      --blue: #1d4ed8;
+      --red: #d92558;
+      --green: #15803d;
+      --shadow: 0 24px 72px rgba(15, 23, 42, 0.13);
       font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       min-height: 100vh;
       margin: 0;
-      background:
-        radial-gradient(circle at 10% 12%, rgba(29, 78, 216, 0.16), transparent 28%),
-        radial-gradient(circle at 92% 4%, rgba(245, 158, 11, 0.18), transparent 30%),
-        linear-gradient(180deg, #eef5ff 0%, #f8fafc 42%, #e8eef8 100%);
       color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 6%, rgba(5, 150, 166, 0.16), transparent 26%),
+        radial-gradient(circle at 88% 12%, rgba(29, 78, 216, 0.14), transparent 28%),
+        linear-gradient(180deg, #eff8fb 0%, #f8fafc 46%, #edf4f7 100%);
       line-height: 1.55;
     }
 
     button,
-    input {
-      font: inherit;
-    }
+    input { font: inherit; }
 
     .wrap {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1280px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 52px;
+      padding: 32px 0 56px;
     }
 
-    .hero {
-      position: relative;
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(290px, 0.75fr);
-      gap: 26px;
-      padding: clamp(26px, 5vw, 48px);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      border-radius: var(--radius-xl);
-      background: rgba(255, 255, 255, 0.86);
+    .hero,
+    .panel,
+    .admission-card,
+    .answer-card {
+      border: 1px solid rgba(148, 163, 184, 0.52);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.94);
       box-shadow: var(--shadow);
     }
 
-    .hero::after {
-      position: absolute;
-      right: -90px;
-      bottom: -110px;
-      width: 300px;
-      height: 300px;
-      content: "";
-      border-radius: 999px;
-      background: conic-gradient(from 160deg, rgba(29, 78, 216, 0.2), rgba(245, 158, 11, 0.24), rgba(22, 163, 74, 0.14), rgba(29, 78, 216, 0.2));
-      filter: blur(8px);
-    }
-
-    .hero > * {
-      position: relative;
-      z-index: 1;
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 24px;
+      padding: clamp(24px, 5vw, 46px);
+      overflow: hidden;
     }
 
     .eyebrow {
@@ -91,48 +70,48 @@
       gap: 8px;
       margin: 0 0 16px;
       padding: 8px 12px;
-      border: 1px solid #bfdbfe;
+      border: 1px solid #9ee6ef;
       border-radius: 999px;
-      background: #eff6ff;
-      color: var(--brand);
-      font-size: 0.92rem;
-      font-weight: 800;
+      background: #ecfeff;
+      color: var(--teal-dark);
+      font-weight: 900;
     }
 
     h1,
     h2,
     h3,
-    p {
-      margin-top: 0;
-    }
+    p { margin-top: 0; }
 
     h1 {
-      margin-bottom: 18px;
-      font-size: clamp(2.3rem, 6vw, 4.7rem);
+      margin-bottom: 16px;
+      font-size: clamp(2.2rem, 6vw, 4.8rem);
       line-height: 0.98;
       letter-spacing: -0.08em;
+    }
+
+    .lead,
+    .hint {
+      color: var(--muted);
     }
 
     .lead {
       max-width: 760px;
       margin-bottom: 0;
-      color: #475569;
-      font-size: clamp(1rem, 2vw, 1.18rem);
+      font-size: clamp(1rem, 2vw, 1.16rem);
     }
 
     .quick-card {
-      align-self: stretch;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      padding: 22px;
+      border: 1px dashed #8dd7df;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #f8ffff, #f2fbff);
     }
 
     .quick-card strong {
       display: block;
       margin-bottom: 12px;
-      color: var(--brand-dark);
-      font-size: 1.2rem;
+      color: var(--teal-dark);
+      font-size: 1.15rem;
     }
 
     .quick-list {
@@ -141,102 +120,72 @@
       margin: 0;
       padding: 0;
       list-style: none;
-      color: #475569;
-      font-weight: 700;
+      color: #334155;
+      font-weight: 800;
     }
 
     .stepper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin: 24px 0;
+      margin: 22px 0;
     }
 
     .step {
       padding: 14px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
+      border-radius: 18px;
       background: rgba(255, 255, 255, 0.76);
       color: var(--muted);
-      font-weight: 800;
+      font-weight: 900;
       text-align: center;
     }
 
     .step.active {
-      border-color: #93c5fd;
-      background: #eff6ff;
-      color: var(--brand);
-      box-shadow: 0 12px 34px rgba(29, 78, 216, 0.14);
+      border-color: #67d8e4;
+      background: #ecfeff;
+      color: var(--teal-dark);
+      box-shadow: 0 14px 32px rgba(8, 114, 132, 0.13);
     }
 
-    .screen {
-      display: none;
-    }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
-    .screen.active {
-      display: block;
-    }
-
-    .panel {
-      border: 1px solid rgba(148, 163, 184, 0.46);
-      border-radius: var(--radius-xl);
-      background: rgba(255, 255, 255, 0.92);
-      box-shadow: var(--shadow);
-    }
-
-    .panel-body {
-      padding: clamp(22px, 4vw, 34px);
-    }
+    .panel-body { padding: clamp(22px, 4vw, 34px); }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
+      gap: 16px;
     }
 
-    .field {
-      display: grid;
-      gap: 8px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-weight: 900;
-    }
+    .field { display: grid; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-weight: 900; }
 
     input[type="text"],
     input[type="date"] {
       width: 100%;
       min-height: 52px;
       padding: 0 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: var(--radius-md);
+      border: 1px solid #c4cfdd;
+      border-radius: 12px;
       background: #fff;
       color: var(--ink);
       outline: none;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
     input[type="text"]:focus,
     input[type="date"]:focus {
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.22);
-    }
-
-    .hint {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.94rem;
+      border-color: #22b8c7;
+      box-shadow: 0 0 0 4px rgba(34, 184, 199, 0.18);
     }
 
     .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 24px;
+      margin-top: 22px;
     }
 
     .button {
@@ -247,181 +196,184 @@
       padding: 0 18px;
       border: 0;
       border-radius: 999px;
-      background: linear-gradient(135deg, var(--brand), #2563eb);
-      color: white;
-      box-shadow: 0 14px 34px rgba(29, 78, 216, 0.25);
+      background: linear-gradient(135deg, var(--teal), #0ea5b7);
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(5, 150, 166, 0.24);
       cursor: pointer;
-      font-weight: 900;
+      font-weight: 950;
       text-decoration: none;
     }
 
     .button.secondary {
       border: 1px solid #cbd5e1;
-      background: #ffffff;
+      background: #fff;
       box-shadow: none;
       color: #1e293b;
     }
 
-    .button.warning {
-      background: linear-gradient(135deg, var(--accent), #f97316);
-      box-shadow: 0 14px 34px rgba(245, 158, 11, 0.25);
-    }
-
-    .button:disabled {
-      cursor: not-allowed;
-      opacity: 0.56;
-    }
+    .button:disabled { cursor: not-allowed; opacity: 0.56; }
 
     .ticket-wrap {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.65fr);
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.58fr);
       gap: 22px;
       align-items: start;
       margin-top: 24px;
     }
 
-    .ticket {
+    .admission-card {
       overflow: hidden;
-      border: 2px solid #111827;
-      border-radius: 18px;
-      background: var(--paper);
-    }
-
-    .ticket-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 18px 20px;
-      border-bottom: 2px solid #111827;
-      background: #eef2ff;
-    }
-
-    .ticket-title {
-      margin: 0;
-      font-size: clamp(1.3rem, 3vw, 2rem);
-      letter-spacing: -0.05em;
-    }
-
-    .ticket-type {
-      align-self: flex-start;
-      padding: 6px 10px;
-      border: 1px solid #111827;
-      border-radius: 999px;
+      border: 2px solid #1f2937;
+      border-radius: 10px;
       background: #fff;
-      font-weight: 900;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.11);
     }
 
-    .ticket-grid {
+    .admission-grid {
       display: grid;
-      grid-template-columns: 170px 1fr;
-      border-bottom: 1px solid #111827;
+      grid-template-columns: 1.1fr 1.15fr 0.95fr;
+      min-height: 285px;
+    }
+
+    .ticket-main,
+    .ticket-time,
+    .ticket-info-box { border-right: 2px solid #1f2937; }
+    .ticket-info-box { border-right: 0; background: #eef8ef; }
+
+    .ticket-title-bar,
+    .time-title,
+    .info-title {
+      display: grid;
+      place-items: center;
+      min-height: 42px;
+      border-bottom: 2px solid #1f2937;
+      font-weight: 950;
+      letter-spacing: 0.18em;
+    }
+
+    .ticket-title-bar { font-size: 1.65rem; }
+    .ticket-year { font-size: 0.98rem; letter-spacing: 0; }
+
+    .photo-and-id {
+      display: grid;
+      grid-template-columns: 116px 1fr;
+      border-bottom: 1px solid #1f2937;
     }
 
     .photo-box {
       display: grid;
       place-items: center;
-      min-height: 210px;
-      border-right: 1px solid #111827;
-      background: repeating-linear-gradient(-45deg, #f8fafc, #f8fafc 8px, #eef2f7 8px, #eef2f7 16px);
+      min-height: 136px;
+      border-right: 1px solid #1f2937;
+      background: linear-gradient(135deg, #e5edf7, #f8fafc);
       color: #64748b;
       font-weight: 900;
       text-align: center;
     }
 
-    .ticket-info {
+    .id-table,
+    .time-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .id-table th,
+    .id-table td,
+    .time-table th,
+    .time-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #1f2937;
+      text-align: center;
+    }
+
+    .id-table th,
+    .time-table th { background: #f7fafc; font-weight: 950; }
+    .id-table td { font-size: 1.1rem; font-weight: 900; letter-spacing: 0.1em; }
+
+    .personal-row {
       display: grid;
-      grid-template-rows: repeat(4, 1fr);
+      grid-template-columns: 96px 1fr;
+      border-bottom: 1px solid #1f2937;
     }
 
-    .ticket-row {
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      border-bottom: 1px solid #111827;
+    .personal-row span {
+      min-height: 38px;
+      padding: 7px 10px;
+      font-weight: 900;
     }
 
-    .ticket-row:last-child {
-      border-bottom: 0;
-    }
-
-    .ticket-row span:first-child {
-      display: flex;
-      align-items: center;
-      padding: 10px 12px;
-      border-right: 1px solid #111827;
+    .personal-row span:first-child {
+      border-right: 1px solid #1f2937;
       background: #f8fafc;
-      font-weight: 900;
-    }
-
-    .ticket-row span:last-child {
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      font-size: 1.08rem;
-      font-weight: 900;
+      text-align: center;
     }
 
     .ticket-notice {
       margin: 0;
-      padding: 14px 18px;
+      padding: 10px 14px;
       color: #334155;
-      font-size: 0.94rem;
+      font-size: 0.92rem;
+      text-align: center;
     }
 
-    .verify-card {
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: #f8fafc;
+    .time-table td { font-size: 0.92rem; }
+
+    .info-list {
+      margin: 0;
+      padding: 12px 18px 12px 28px;
+      font-weight: 850;
+      line-height: 1.45;
+    }
+
+    .type-stamp {
+      display: inline-grid;
+      place-items: center;
+      min-width: 90px;
+      min-height: 34px;
+      margin: 10px 14px;
+      border: 2px solid var(--teal);
+      border-radius: 999px;
+      color: var(--teal-dark);
+      font-weight: 950;
     }
 
     .message {
       display: none;
-      margin: 16px 0 0;
+      margin: 14px 0 0;
       padding: 12px 14px;
-      border-radius: var(--radius-md);
-      font-weight: 800;
+      border-radius: 12px;
+      font-weight: 850;
     }
 
-    .message.show {
-      display: block;
-    }
-
-    .message.error {
-      border: 1px solid #fecaca;
-      background: #fef2f2;
-      color: #b91c1c;
-    }
-
-    .message.ok {
-      border: 1px solid #bbf7d0;
-      background: #f0fdf4;
-      color: #15803d;
-    }
+    .message.show { display: block; }
+    .message.error { border: 1px solid #fecaca; background: #fef2f2; color: #b91c1c; }
+    .message.ok { border: 1px solid #bbf7d0; background: #f0fdf4; color: #15803d; }
 
     .exam-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 390px;
+      grid-template-columns: minmax(0, 1fr) 430px;
       gap: 22px;
       align-items: start;
     }
 
     .exam-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 18px;
-      padding: 18px;
+      margin-bottom: 16px;
+      padding: 16px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: #ffffff;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     }
 
-    .exam-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .exam-meta { display: flex; flex-wrap: wrap; gap: 8px; }
 
     .pill {
       display: inline-flex;
@@ -429,138 +381,190 @@
       min-height: 34px;
       padding: 0 10px;
       border-radius: 999px;
-      background: #eff6ff;
-      color: var(--brand);
-      font-weight: 900;
+      background: #ecfeff;
+      color: var(--teal-dark);
       font-size: 0.9rem;
+      font-weight: 950;
     }
 
-    .question-list {
-      display: grid;
-      gap: 14px;
+    .listening-box {
+      grid-column: 1 / -1;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #bae6fd;
+      border-radius: 14px;
+      background: #f0f9ff;
     }
 
-    .question-card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: #ffffff;
+    .listening-box audio { width: 100%; margin-top: 8px; }
+
+    .paper-pages { display: grid; gap: 18px; }
+
+    .paper-page {
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      background: var(--paper);
       overflow: hidden;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, 0.12);
     }
 
-    .question-top {
+    .paper-page figcaption {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      background: #f8fafc;
+      padding: 10px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #fff;
+      color: #334155;
       font-weight: 900;
     }
 
-    .question-body {
-      padding: 16px;
-      color: #475569;
-    }
-
-    .placeholder-lines {
-      display: grid;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .placeholder-lines span {
+    .paper-page img {
       display: block;
-      height: 10px;
-      border-radius: 999px;
-      background: #e2e8f0;
+      width: 100%;
+      height: auto;
+      background: #fff;
     }
 
-    .placeholder-lines span:nth-child(2) {
-      width: 84%;
-    }
-
-    .placeholder-lines span:nth-child(3) {
-      width: 66%;
-    }
-
-    .omr-panel {
+    .answer-card {
       position: sticky;
       top: 18px;
       overflow: hidden;
+      border: 2px solid var(--teal);
+      background: #f6feff;
     }
 
-    .omr-head {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--line);
-      background: #0f172a;
-      color: #ffffff;
+    .omr-title {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--teal);
+      background: #f7ffff;
+      color: var(--teal-dark);
     }
 
-    .omr-head h2 {
-      margin-bottom: 6px;
-      letter-spacing: -0.04em;
-    }
-
-    .omr-head p {
+    .omr-title h2 {
       margin: 0;
-      color: #cbd5e1;
-      font-size: 0.94rem;
+      font-size: 1.26rem;
+      letter-spacing: -0.03em;
     }
+
+    .subject-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--teal);
+      background: #ffffff;
+      color: var(--teal-dark);
+      font-weight: 950;
+    }
+
+    .subject-circle {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--teal);
+      border-radius: 999px;
+      font-size: 1.1rem;
+    }
+
+    .answer-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--teal);
+      background: #fff;
+    }
+
+    .answer-meta div {
+      padding: 8px 10px;
+      border-right: 1px solid var(--teal);
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+
+    .answer-meta div:last-child { border-right: 0; }
 
     .omr-sheet {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      padding: 16px;
-      background: #ffffff;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .omr-column {
+      border: 1px solid var(--teal);
+      border-right: 0;
+    }
+
+    .omr-column:last-child { border-right: 1px solid var(--teal); }
+
+    .omr-column-head,
+    .omr-row {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+    }
+
+    .omr-column-head {
+      min-height: 30px;
+      border-bottom: 1px solid var(--teal);
+      background: #eafffd;
+      color: var(--teal-dark);
+      font-size: 0.82rem;
+      font-weight: 950;
+      text-align: center;
+    }
+
+    .omr-column-head span:first-child,
+    .omr-number {
+      border-right: 1px solid var(--teal);
     }
 
     .omr-row {
-      padding: 8px;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      background: #fbfdff;
+      min-height: 29px;
+      border-bottom: 1px solid #d7f3f5;
+      background: #fff;
     }
 
-    .omr-row.correct {
-      border-color: #86efac;
-      background: #f0fdf4;
-    }
-
-    .omr-row.wrong {
-      border-color: #fecaca;
-      background: #fef2f2;
-    }
+    .omr-row:last-child { border-bottom: 0; }
+    .omr-row.correct { background: #f0fdf4; }
+    .omr-row.wrong { background: #fff1f2; }
 
     .omr-number {
-      display: flex;
-      justify-content: space-between;
-      gap: 4px;
-      margin-bottom: 7px;
-      color: #334155;
-      font-size: 0.82rem;
-      font-weight: 900;
+      display: grid;
+      place-items: center;
+      height: 100%;
+      color: var(--teal-dark);
+      font-weight: 950;
+      font-size: 0.86rem;
     }
 
     .bubbles {
       display: flex;
-      gap: 4px;
-      justify-content: space-between;
+      justify-content: space-around;
+      gap: 3px;
+      padding: 3px 4px;
     }
 
     .bubble-label {
       position: relative;
       display: inline-grid;
       place-items: center;
-      width: 24px;
-      height: 24px;
-      border: 1px solid #94a3b8;
+      width: 22px;
+      height: 22px;
+      border: 1.4px solid #de7aa3;
       border-radius: 999px;
       background: #fff;
-      color: #475569;
+      color: #b01858;
       cursor: pointer;
-      font-size: 0.78rem;
-      font-weight: 900;
+      font-size: 0.72rem;
+      font-weight: 950;
+      line-height: 1;
       user-select: none;
     }
 
@@ -571,56 +575,52 @@
     }
 
     .bubble-label:has(input:checked) {
-      border-color: #111827;
       background: #111827;
-      color: #ffffff;
-      box-shadow: inset 0 0 0 3px #111827;
+      border-color: #111827;
+      color: #fff;
+      box-shadow: inset 0 0 0 2px #111827;
     }
 
     .omr-actions {
       display: grid;
       gap: 10px;
-      padding: 0 16px 16px;
-      background: #ffffff;
+      padding: 0 14px 14px;
+      background: #fff;
     }
 
     .score-box {
       display: none;
-      padding: 18px 20px;
-      border-top: 1px solid var(--line);
+      padding: 16px;
+      border-top: 1px solid var(--teal);
       background: #f8fafc;
     }
 
-    .score-box.show {
-      display: block;
-    }
+    .score-box.show { display: block; }
 
     .score-big {
-      margin: 0 0 8px;
-      color: var(--brand-dark);
+      margin: 0 0 6px;
+      color: var(--teal-dark);
       font-size: 3rem;
-      line-height: 1;
       font-weight: 950;
       letter-spacing: -0.08em;
+      line-height: 1;
     }
 
     .answer-table {
       width: 100%;
-      margin-top: 14px;
+      margin-top: 12px;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
     }
 
     .answer-table th,
     .answer-table td {
-      padding: 7px;
-      border: 1px solid #e2e8f0;
+      padding: 6px;
+      border: 1px solid #d5e6ef;
       text-align: center;
     }
 
-    .answer-table th {
-      background: #eef2ff;
-    }
+    .answer-table th { background: #eafffd; }
 
     .sr-only {
       position: absolute;
@@ -634,77 +634,43 @@
       border: 0;
     }
 
-    @media (max-width: 980px) {
+    .footer {
+      margin: 22px 0 0;
+      color: #64748b;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 1080px) {
       .hero,
       .ticket-wrap,
-      .exam-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .omr-panel {
-        position: static;
-      }
+      .exam-layout { grid-template-columns: 1fr; }
+      .answer-card { position: static; }
     }
 
-    @media (max-width: 700px) {
-      .wrap {
-        width: min(100% - 20px, 1180px);
-        padding-top: 20px;
-      }
-
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 20px, 1280px); padding-top: 18px; }
       .stepper,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .ticket-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .photo-box {
-        min-height: 120px;
-        border-right: 0;
-        border-bottom: 1px solid #111827;
-      }
-
-      .omr-sheet {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 430px) {
-      .omr-sheet {
-        grid-template-columns: 1fr;
-      }
+      .form-grid,
+      .admission-grid { grid-template-columns: 1fr; }
+      .ticket-main,
+      .ticket-time { border-right: 0; border-bottom: 2px solid #1f2937; }
+      .omr-sheet { grid-template-columns: 1fr; }
+      .omr-column,
+      .omr-column:last-child { border-right: 1px solid var(--teal); border-bottom: 0; }
     }
 
     @media print {
-      body {
-        background: #fff;
-      }
-
+      body { background: #fff; }
       .hero,
       .stepper,
       .actions,
-      .verify-card,
       .exam-layout,
-      .footer {
-        display: none !important;
-      }
-
-      .wrap {
-        width: 100%;
-        padding: 0;
-      }
-
-      .panel {
-        border: 0;
-        box-shadow: none;
-      }
-
-      .ticket-wrap {
-        display: block;
-      }
+      .verify-card,
+      .footer { display: none !important; }
+      .wrap { width: 100%; padding: 0; }
+      .panel { border: 0; box-shadow: none; }
+      .ticket-wrap { display: block; }
     }
   </style>
 </head>
@@ -712,20 +678,21 @@
   <main class="wrap">
     <section class="hero" aria-labelledby="pageTitle">
       <div>
-        <p class="eyebrow">✍️ 영어 영역 · 짝수형 OMR</p>
-        <h1 id="pageTitle">수능 영어<br>모의고사 플랫폼</h1>
+        <p class="eyebrow">🎧 영어 듣기 포함 · 짝수형 문제지 배포</p>
+        <h1 id="pageTitle">수능 영어<br>모의평가 응시 사이트</h1>
         <p class="lead">
-          닉네임과 생년월일로 수험표를 만들고, 이름·생년월일·수험번호 확인 후 시험을 시작하는 흐름입니다.
-          문제 지문은 나중에 붙여 넣을 수 있도록 45문항 틀을 준비했고, OMR 체크와 자동 채점까지 연결했습니다.
+          닉네임과 생년월일로 수험표를 만들고, 다음 화면에서 이름·생년월일·수험번호를 다시 확인한 뒤 시험을 시작합니다.
+          시험지는 브랜치에 들어있는 수능 영어 문제 이미지로 그대로 보여주며, 시험 시작 즉시 영어 듣기평가 음원이 한 번만 재생됩니다.
         </p>
       </div>
       <aside class="quick-card" aria-label="구성 요약">
-        <strong>준비된 기능</strong>
+        <strong>구현된 흐름</strong>
         <ul class="quick-list">
-          <li>① 수험표 자동 생성</li>
-          <li>② 응시자 정보 확인 입장</li>
-          <li>③ 45문항 OMR 체크</li>
-          <li>④ 영어 영역 정답·배점 자동 채점</li>
+          <li>① 수험표 자동 생성 및 짝수형 문형 배정</li>
+          <li>② 이름·생년월일·수험번호 재확인</li>
+          <li>③ 실제 문제지 이미지 기반 시험 화면</li>
+          <li>④ 모의평가 답안지형 OMR 체크</li>
+          <li>⑤ 영어듣기평가 1회 재생 잠금</li>
         </ul>
       </aside>
     </section>
@@ -740,7 +707,7 @@
       <div class="panel">
         <div class="panel-body">
           <h2 id="ticketTitle">수험표 생성</h2>
-          <p class="hint">실제 이름 대신 닉네임을 사용할 수 있습니다. 수험번호는 입력값과 생성 시각을 바탕으로 자동 발급됩니다.</p>
+          <p class="hint">닉네임과 생년월일을 입력하면 수험번호가 발급되고, 현재 업로드된 문제지에 맞춰 짝수형으로 배정됩니다.</p>
           <form id="ticketForm" class="form-grid">
             <div class="field">
               <label for="nickname">닉네임 / 이름</label>
@@ -760,28 +727,48 @@
           </form>
 
           <div class="ticket-wrap" id="ticketArea" hidden>
-            <article class="ticket" aria-label="수험표 미리보기">
-              <header class="ticket-head">
-                <div>
-                  <p class="hint">2026학년도 대학수학능력시험 모의고사</p>
-                  <h2 class="ticket-title">수험표</h2>
-                </div>
-                <span class="ticket-type">영어 영역 · 짝수형</span>
-              </header>
-              <div class="ticket-grid">
-                <div class="photo-box">사진<br>부착란</div>
-                <div class="ticket-info">
-                  <div class="ticket-row"><span>성명</span><span id="ticketName">-</span></div>
-                  <div class="ticket-row"><span>생년월일</span><span id="ticketBirth">-</span></div>
-                  <div class="ticket-row"><span>수험번호</span><span id="ticketNumber">-</span></div>
-                  <div class="ticket-row"><span>응시영역</span><span>영어 · 45문항 · 100점</span></div>
-                </div>
+            <article class="admission-card" aria-label="수험표 미리보기">
+              <div class="admission-grid">
+                <section class="ticket-main">
+                  <div class="ticket-title-bar"><span><span class="ticket-year">2026학년도 대학수학능력시험</span><br>수 험 표</span></div>
+                  <div class="photo-and-id">
+                    <div class="photo-box">사진<br>부착란</div>
+                    <table class="id-table" aria-label="접수번호와 성명">
+                      <tr><th>※ 접수번호</th></tr>
+                      <tr><td id="ticketReceipt">-</td></tr>
+                      <tr><th>성 명</th></tr>
+                      <tr><td id="ticketName">-</td></tr>
+                    </table>
+                  </div>
+                  <div class="personal-row"><span>생년월일</span><span id="ticketBirth">-</span></div>
+                  <div class="personal-row"><span>수험번호</span><span id="ticketNumber">-</span></div>
+                  <p class="ticket-notice">※ 수험표의 이름, 생년월일, 수험번호를 본인 확인 단계에서 정확히 입력하세요.</p>
+                </section>
+                <section class="ticket-time" aria-label="시험 시간표">
+                  <div class="time-title">시 험 시 간 표</div>
+                  <table class="time-table">
+                    <tr><th>1교시</th><td>08:40~10:00<br>국어영역</td></tr>
+                    <tr><th>2교시</th><td>10:30~12:10<br>수학영역</td></tr>
+                    <tr><th>3교시</th><td>13:10~14:20<br>영어영역</td></tr>
+                    <tr><th>4교시</th><td>14:50~16:37<br>한국사/탐구영역</td></tr>
+                    <tr><th>5교시</th><td>17:05~17:45<br>제2외국어/한문</td></tr>
+                  </table>
+                </section>
+                <section class="ticket-info-box" aria-label="응시 정보">
+                  <div class="info-title">수험생 유의사항</div>
+                  <ol class="info-list">
+                    <li>영어 영역은 45문항, 총점 100점입니다.</li>
+                    <li>듣기평가는 시험 시작 직후 1회만 재생됩니다.</li>
+                    <li>답안지는 ①~⑤ 중 하나만 선택하세요.</li>
+                    <li>배정 문형: <strong id="ticketTypeText">-</strong></li>
+                  </ol>
+                  <span class="type-stamp" id="ticketTypeStamp">문형 -</span>
+                </section>
               </div>
-              <p class="ticket-notice">※ 본 수험표는 사이트 연습용입니다. 시험 시작 전 본인 확인 단계에서 성명, 생년월일, 수험번호를 다시 입력하세요.</p>
             </article>
-            <div class="verify-card">
+            <div class="quick-card verify-card">
               <h3>다음 단계 안내</h3>
-              <p class="hint">수험번호를 복사하거나 메모한 뒤 본인 확인으로 이동하세요. 수험표 양식은 사용자가 보내줄 실제 형식에 맞춰 나중에 바꿀 수 있습니다.</p>
+              <p class="hint">수험번호를 메모한 뒤 본인 확인으로 이동하세요. 시험 시작 버튼을 누르면 듣기평가 음원이 자동으로 시작되고 다시 재생할 수 없습니다.</p>
               <div class="actions">
                 <button class="button secondary" type="button" id="printTicketButton">수험표 인쇄</button>
                 <button class="button" type="button" id="goVerifyButton">본인 확인으로 이동</button>
@@ -808,14 +795,14 @@
             </div>
             <div class="field full">
               <label for="verifyNumber">수험번호</label>
-              <input id="verifyNumber" name="verifyNumber" type="text" placeholder="예: E2606041234" autocomplete="off" required>
+              <input id="verifyNumber" name="verifyNumber" type="text" placeholder="예: E2606051234" autocomplete="off" required>
             </div>
             <div class="field full actions">
               <button class="button secondary" type="button" id="backTicketButton">수험표 다시 보기</button>
-              <button class="button warning" type="submit">시험 시작</button>
+              <button class="button" type="submit">시험 시작</button>
             </div>
           </form>
-          <p class="message" id="verifyMessage" role="alert"></p>
+          <p class="message" id="verifyMessage" role="status" aria-live="polite"></p>
         </div>
       </div>
     </section>
@@ -825,23 +812,33 @@
         <section>
           <div class="exam-header">
             <div>
-              <h2 id="examTitle">영어 영역 모의고사</h2>
-              <p class="hint">문제 원문을 받으면 각 카드 안의 대기 문구를 실제 지문과 선택지로 교체하면 됩니다.</p>
+              <h2 id="examTitle">영어 영역 모의평가</h2>
+              <p class="hint">배포된 문형의 문제지를 확인하고 오른쪽 답안지에 OMR 체크하세요.</p>
             </div>
             <div class="exam-meta" aria-label="시험 정보">
               <span class="pill" id="candidatePill">응시자 -</span>
-              <span class="pill">짝수형</span>
+              <span class="pill" id="examTypePill">문형 -</span>
               <span class="pill">45문항</span>
               <span class="pill">총 100점</span>
             </div>
+            <div class="listening-box">
+              <strong>영어듣기평가</strong>
+              <p class="hint" id="audioStatus">시험 시작과 동시에 1회만 재생됩니다. 브라우저 정책상 자동 재생이 막히면 아래 재생 버튼을 한 번 눌러 시작하세요.</p>
+              <audio id="listeningAudio" src="mix_25m17s%20(audio-joiner.com)%20(1).mp3" preload="auto" controls controlsList="nodownload noplaybackrate"></audio>
+            </div>
           </div>
-          <div class="question-list" id="questionList"></div>
+          <div class="paper-pages" id="paperPages"></div>
         </section>
 
-        <aside class="panel omr-panel" aria-label="OMR 답안지">
-          <div class="omr-head">
-            <h2>OMR 답안지</h2>
-            <p>각 문항별로 ①~⑤ 중 하나를 체크하세요. 제출 후 정답과 배점을 기준으로 자동 채점됩니다.</p>
+        <aside class="answer-card" aria-label="대학수학능력시험 모의평가 답안지">
+          <div class="omr-title">
+            <h2>대학수학능력시험 모의평가 답안지</h2>
+            <strong id="omrType">문형 -</strong>
+          </div>
+          <div class="subject-line"><span class="subject-circle">③</span><span>교시&nbsp;&nbsp;영어 영역</span></div>
+          <div class="answer-meta">
+            <div>성명: <span id="omrName">-</span></div>
+            <div>수험번호: <span id="omrNumber">-</span></div>
           </div>
           <form id="omrForm">
             <div class="omr-sheet" id="omrSheet"></div>
@@ -856,7 +853,7 @@
       </div>
     </section>
 
-    <p class="footer">수험표와 OMR 형식은 추후 보내주는 이미지/양식에 맞춰 세부 디자인을 다시 조정할 수 있습니다.</p>
+    <p class="footer">사진 자료를 기반으로 수험표·문제지·OMR 답안지 흐름을 한 페이지에 구성했습니다.</p>
   </main>
 
   <script>
@@ -872,19 +869,39 @@
       { answer: 4, points: 3 }, { answer: 5, points: 2 }, { answer: 5, points: 2 }, { answer: 3, points: 2 }, { answer: 5, points: 2 }
     ];
 
+    const paperImages = [
+      "영어영역_문제지_260604_132711_260604_134306_9.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_10.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_11.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_12.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_13.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_14.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_15.jpg",
+      "영어영역_문제지_260604_132711_260604_134306_16.jpg"
+    ];
+
     const circleNumbers = ["①", "②", "③", "④", "⑤"];
     const ticketForm = document.getElementById("ticketForm");
     const verifyForm = document.getElementById("verifyForm");
     const omrForm = document.getElementById("omrForm");
     const ticketArea = document.getElementById("ticketArea");
+    const ticketReceipt = document.getElementById("ticketReceipt");
     const ticketName = document.getElementById("ticketName");
     const ticketBirth = document.getElementById("ticketBirth");
     const ticketNumber = document.getElementById("ticketNumber");
+    const ticketTypeText = document.getElementById("ticketTypeText");
+    const ticketTypeStamp = document.getElementById("ticketTypeStamp");
     const verifyMessage = document.getElementById("verifyMessage");
-    const questionList = document.getElementById("questionList");
+    const paperPages = document.getElementById("paperPages");
     const omrSheet = document.getElementById("omrSheet");
     const scoreBox = document.getElementById("scoreBox");
     const candidatePill = document.getElementById("candidatePill");
+    const examTypePill = document.getElementById("examTypePill");
+    const omrType = document.getElementById("omrType");
+    const omrName = document.getElementById("omrName");
+    const omrNumber = document.getElementById("omrNumber");
+    const listeningAudio = document.getElementById("listeningAudio");
+    const audioStatus = document.getElementById("audioStatus");
     const steps = document.querySelectorAll(".step");
     const screens = {
       ticket: document.getElementById("ticketScreen"),
@@ -893,6 +910,7 @@
     };
 
     let candidate = null;
+    let listeningStarted = false;
 
     function formatBirth(value) {
       if (!value) return "-";
@@ -901,7 +919,7 @@
     }
 
     function generateExamNumber(name, birth) {
-      const seed = `${name}${birth}${Date.now()}`;
+      const seed = `${name}${birth}${Date.now()}${Math.random()}`;
       const hash = [...seed].reduce((sum, char) => sum + char.charCodeAt(0), 0) % 10000;
       const today = new Date();
       const datePart = `${String(today.getFullYear()).slice(2)}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
@@ -919,9 +937,12 @@
     }
 
     function updateTicket() {
+      ticketReceipt.textContent = candidate.receiptNumber;
       ticketName.textContent = candidate.name;
       ticketBirth.textContent = formatBirth(candidate.birth);
       ticketNumber.textContent = candidate.examNumber;
+      ticketTypeText.textContent = candidate.examType;
+      ticketTypeStamp.textContent = candidate.examType;
       ticketArea.hidden = false;
     }
 
@@ -930,45 +951,45 @@
       verifyMessage.className = `message show ${type}`;
     }
 
-    function renderQuestions() {
-      questionList.innerHTML = answerKey.map((item, index) => {
-        const number = index + 1;
-        return `
-          <article class="question-card" id="question-${number}">
-            <div class="question-top">
-              <span>${number}번 문제</span>
-              <span>${item.points}점</span>
-            </div>
-            <div class="question-body">
-              <strong>문제 입력 대기</strong>
-              <p class="hint">사용자가 보내줄 영어 지문, 발문, 선택지를 여기에 넣을 예정입니다. 지금은 OMR과 채점 흐름을 먼저 테스트할 수 있습니다.</p>
-              <div class="placeholder-lines" aria-hidden="true"><span></span><span></span><span></span></div>
-            </div>
-          </article>
-        `;
-      }).join("");
+    function renderPaper() {
+      paperPages.innerHTML = paperImages.map((src, index) => `
+        <figure class="paper-page">
+          <figcaption><span>영어 영역 문제지 ${index + 1}</span><span>${candidate.examType}</span></figcaption>
+          <img src="${src}" alt="영어 영역 문제지 ${index + 1}쪽">
+        </figure>
+      `).join("");
     }
 
     function renderOmr() {
-      omrSheet.innerHTML = answerKey.map((item, questionIndex) => {
-        const number = questionIndex + 1;
-        const choices = circleNumbers.map((label, choiceIndex) => {
-          const value = choiceIndex + 1;
-          const id = `q${number}-choice${value}`;
-          return `
-            <label class="bubble-label" for="${id}">
-              <input id="${id}" type="radio" name="q${number}" value="${value}">
-              <span>${label}</span>
-            </label>
-          `;
-        }).join("");
-        return `
-          <div class="omr-row" id="omr-row-${number}">
-            <div class="omr-number"><span>${number}번</span><span>${item.points}점</span></div>
-            <div class="bubbles">${choices}</div>
-          </div>
-        `;
-      }).join("");
+      const columns = [
+        answerKey.slice(0, 20).map((item, index) => ({ ...item, number: index + 1 })),
+        answerKey.slice(20, 40).map((item, index) => ({ ...item, number: index + 21 })),
+        answerKey.slice(40, 45).map((item, index) => ({ ...item, number: index + 41 }))
+      ];
+
+      omrSheet.innerHTML = columns.map((column) => `
+        <div class="omr-column">
+          <div class="omr-column-head"><span>문번</span><span>답&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;란</span></div>
+          ${column.map((item) => {
+            const choices = circleNumbers.map((label, choiceIndex) => {
+              const value = choiceIndex + 1;
+              const id = `q${item.number}-choice${value}`;
+              return `
+                <label class="bubble-label" for="${id}">
+                  <input id="${id}" type="radio" name="q${item.number}" value="${value}">
+                  <span>${label}</span>
+                </label>
+              `;
+            }).join("");
+            return `
+              <div class="omr-row" id="omr-row-${item.number}">
+                <div class="omr-number">${item.number}</div>
+                <div class="bubbles">${choices}</div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `).join("");
     }
 
     function getAnswers() {
@@ -1018,7 +1039,7 @@
       scoreBox.classList.add("show");
       scoreBox.innerHTML = `
         <p class="score-big">${score}<span class="sr-only">점</span></p>
-        <p class="hint"><strong>${correctCount}/45개 정답</strong> · 미체크 ${blankCount}개 · 총점 100점</p>
+        <p class="hint"><strong>${correctCount}/45개 정답</strong> · 미체크 ${blankCount}개 · 총점 100점 · ${candidate.examType}</p>
         <table class="answer-table" aria-label="채점 결과표">
           <thead><tr><th>번호</th><th>내 답</th><th>정답</th><th>배점</th><th>결과</th></tr></thead>
           <tbody>${rows}</tbody>
@@ -1027,13 +1048,38 @@
       scoreBox.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    function lockListeningAfterPlay() {
+      if (listeningStarted) return;
+      listeningStarted = true;
+      listeningAudio.controls = false;
+      audioStatus.textContent = "듣기평가가 시작되었습니다. 이 음원은 종료 후 다시 들을 수 없습니다.";
+    }
+
+    function startListeningOnce() {
+      if (listeningStarted) return;
+      listeningAudio.currentTime = 0;
+      const playPromise = listeningAudio.play();
+      if (playPromise) {
+        playPromise.then(lockListeningAfterPlay).catch(() => {
+          audioStatus.textContent = "브라우저가 자동 재생을 막았습니다. 아래 재생 버튼을 지금 한 번만 눌러 듣기평가를 시작하세요.";
+        });
+      }
+    }
+
     ticketForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const formData = new FormData(ticketForm);
       const name = String(formData.get("nickname")).trim();
       const birth = String(formData.get("birthdate"));
       if (!name || !birth) return;
-      candidate = { name, birth, examNumber: generateExamNumber(name, birth) };
+      const examNumber = generateExamNumber(name, birth);
+      candidate = {
+        name,
+        birth,
+        examNumber,
+        receiptNumber: examNumber.slice(-6),
+        examType: "짝수형"
+      };
       updateTicket();
     });
 
@@ -1055,7 +1101,22 @@
       }
       showMessage("확인되었습니다. 시험 화면으로 이동합니다.", "ok");
       candidatePill.textContent = `응시자 ${candidate.name}`;
+      examTypePill.textContent = candidate.examType;
+      omrType.textContent = candidate.examType;
+      omrName.textContent = candidate.name;
+      omrNumber.textContent = candidate.examNumber;
+      renderPaper();
       setStep("exam");
+      startListeningOnce();
+    });
+
+    listeningAudio.addEventListener("play", lockListeningAfterPlay);
+    listeningAudio.addEventListener("ended", () => {
+      listeningAudio.controls = false;
+      audioStatus.textContent = "듣기평가가 종료되었습니다. 규칙에 따라 다시 재생할 수 없습니다.";
+    });
+    listeningAudio.addEventListener("seeking", () => {
+      if (listeningStarted && listeningAudio.ended) listeningAudio.currentTime = listeningAudio.duration;
     });
 
     omrForm.addEventListener("submit", (event) => {
@@ -1083,18 +1144,23 @@
     });
     document.getElementById("clearAllButton").addEventListener("click", () => {
       candidate = null;
+      listeningStarted = false;
+      listeningAudio.pause();
+      listeningAudio.currentTime = 0;
+      listeningAudio.controls = true;
+      audioStatus.textContent = "시험 시작과 동시에 1회만 재생됩니다. 브라우저 정책상 자동 재생이 막히면 아래 재생 버튼을 한 번 눌러 시작하세요.";
       ticketForm.reset();
       verifyForm.reset();
       omrForm.reset();
       ticketArea.hidden = true;
       verifyMessage.className = "message";
+      paperPages.innerHTML = "";
       scoreBox.classList.remove("show");
       scoreBox.innerHTML = "";
       document.querySelectorAll(".omr-row").forEach((row) => row.classList.remove("correct", "wrong"));
       setStep("ticket");
     });
 
-    renderQuestions();
     renderOmr();
   </script>
 </body>
