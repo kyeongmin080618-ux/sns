@@ -1,70 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Mini SNS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로투스 홀짝</title>
+<style>
+:root{
+  --bg:#0b1020;
+  --card:#151b31;
+  --card-strong:#1f2845;
+  --lotus:#f66bb8;
+  --lotus-deep:#b52d7d;
+  --gold:#ffd36e;
+  --text:#f6f7fb;
+  --muted:#aeb6d1;
+  --success:#44d492;
+  --danger:#ff6b7a;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,"Noto Sans KR",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 20% 15%,rgba(246,107,184,.35),transparent 28%),
+    radial-gradient(circle at 80% 0,rgba(255,211,110,.2),transparent 25%),
+    linear-gradient(135deg,#070a14 0%,var(--bg) 55%,#22122d 100%);
+}
+.wrap{width:min(430px,92vw);margin:0 auto;padding:28px 0}
+.hero{text-align:center;margin-bottom:28px}
+.badge{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border:1px solid rgba(255,255,255,.18);border-radius:999px;color:var(--gold);background:rgba(255,255,255,.06)}
+h1{font-size:clamp(40px,13vw,58px);margin:16px 0 8px;letter-spacing:-3px;text-shadow:0 12px 40px rgba(246,107,184,.35)}
+.hero p{margin:0 auto;color:var(--muted);font-size:16px;line-height:1.55;max-width:330px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px;align-items:stretch}
+.card{background:rgba(21,27,49,.86);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.35);backdrop-filter:blur(14px)}
+.lotus{position:relative;display:grid;place-items:center;min-height:340px;overflow:hidden;background:linear-gradient(145deg,rgba(31,40,69,.92),rgba(181,45,125,.16))}
+.lotus:before,.lotus:after{content:"";position:absolute;width:260px;height:260px;border-radius:48% 52% 46% 54%;background:rgba(246,107,184,.16);filter:blur(2px);transform:rotate(45deg)}
+.lotus:before{top:-90px;left:-80px}.lotus:after{right:-100px;bottom:-90px;background:rgba(255,211,110,.14)}
+.number{z-index:1;width:170px;height:170px;border-radius:50%;display:grid;place-items:center;font-size:68px;font-weight:900;background:radial-gradient(circle at 35% 25%,#fff7,#fff0 30%),linear-gradient(145deg,var(--lotus),var(--lotus-deep));box-shadow:0 0 0 16px rgba(246,107,184,.12),0 22px 60px rgba(181,45,125,.55)}
+.result{z-index:1;margin-top:22px;font-size:24px;font-weight:800}.result small{display:block;margin-top:8px;font-size:14px;font-weight:400;color:var(--muted)}
+.controls h2,.side h2{margin:0 0 16px;font-size:28px}.choice{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.choice button,.play{border:0;border-radius:20px;padding:18px 20px;font-size:20px;font-weight:800;color:var(--text);cursor:pointer;transition:.18s transform,.18s box-shadow,.18s opacity}.choice button{background:var(--card-strong);border:1px solid rgba(255,255,255,.12)}.choice button.active{background:linear-gradient(145deg,var(--lotus),var(--lotus-deep));box-shadow:0 12px 30px rgba(246,107,184,.28)}button:hover{transform:translateY(-2px)}.play{width:100%;background:linear-gradient(145deg,var(--gold),#ff9d42);color:#23140a;box-shadow:0 14px 34px rgba(255,157,66,.26)}.play:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.stat{padding:16px;border-radius:18px;background:rgba(255,255,255,.06);text-align:center}.stat strong{display:block;font-size:26px}.stat span{color:var(--muted);font-size:13px}.notice{margin-top:16px;color:var(--muted);line-height:1.6;font-size:14px}.history{display:grid;gap:10px}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 15px;border-radius:16px;background:rgba(255,255,255,.06);color:var(--muted)}.row b{color:var(--text)}.win{color:var(--success)}.lose{color:var(--danger)}
+@media(max-width:430px){.wrap{padding:22px 0}.card{padding:18px}.lotus{min-height:300px}.number{width:150px;height:150px;font-size:58px}.choice button,.play{font-size:18px;padding:16px}.stats{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between;text-align:left}}
+</style>
 </head>
-
 <body>
+<main class="wrap">
+  <section class="hero">
+    <div class="badge">✦ LOTUS ODD EVEN ✦</div>
+    <h1>로투스 홀짝</h1>
+    <p>연꽃이 피어나는 순간, 숫자의 홀짝을 맞혀보세요. 포인트 전용 미니 게임입니다.</p>
+  </section>
 
-<h1>Mini SNS</h1>
+  <section class="grid">
+    <div class="card lotus" aria-live="polite">
+      <div class="number" id="number">?</div>
+      <div class="result" id="result">홀 또는 짝을 선택하세요<small>1부터 99까지의 숫자가 무작위로 공개됩니다.</small></div>
+    </div>
 
-<input id="username" placeholder="닉네임">
-<br><br>
+    <aside class="card side">
+      <div class="controls">
+        <h2>게임 선택</h2>
+        <div class="choice">
+          <button id="oddBtn" type="button" onclick="selectChoice('홀')">홀</button>
+          <button id="evenBtn" type="button" onclick="selectChoice('짝')">짝</button>
+        </div>
+        <button class="play" id="playBtn" type="button" onclick="playGame()" disabled>로투스 뽑기</button>
+      </div>
 
-<textarea id="content" placeholder="글 작성"></textarea>
-<br><br>
+      <div class="stats">
+        <div class="stat"><strong id="score">1000</strong><span>포인트</span></div>
+        <div class="stat"><strong id="wins">0</strong><span>승리</span></div>
+        <div class="stat"><strong id="rounds">0</strong><span>라운드</span></div>
+      </div>
 
-<button onclick="post()">글 올리기</button>
+      <p class="notice">※ 실제 현금, 배팅, 환전 기능이 없는 데모 사이트입니다. 건전한 재미용으로만 이용해 주세요.</p>
 
-<hr>
-
-<div id="posts"></div>
+      <h2>최근 결과</h2>
+      <div class="history" id="history">
+        <div class="row"><span>아직 기록이 없습니다.</span><b>-</b></div>
+      </div>
+    </aside>
+  </section>
+</main>
 
 <script>
+let selected = "";
+let score = 1000;
+let wins = 0;
+let rounds = 0;
+const history = [];
 
-async function post(){
-
-  const username=document.getElementById("username").value
-  const content=document.getElementById("content").value
-
-  await fetch("/post",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      username:username,
-      content:content
-    })
-  })
-
-  loadPosts()
+function selectChoice(choice){
+  selected = choice;
+  document.getElementById("oddBtn").classList.toggle("active", choice === "홀");
+  document.getElementById("evenBtn").classList.toggle("active", choice === "짝");
+  document.getElementById("playBtn").disabled = false;
+  document.getElementById("result").innerHTML = choice + " 선택 완료<small>로투스 뽑기를 눌러 결과를 확인하세요.</small>";
 }
 
-async function loadPosts(){
+function playGame(){
+  if(!selected) return;
 
-  const res=await fetch("/posts")
-  const data=await res.json()
+  const number = Math.floor(Math.random() * 99) + 1;
+  const answer = number % 2 === 0 ? "짝" : "홀";
+  const success = selected === answer;
 
-  const posts=document.getElementById("posts")
-  posts.innerHTML=""
+  rounds += 1;
+  if(success){ wins += 1; score += 120; }
+  else{ score = Math.max(0, score - 80); }
 
-  data.forEach(p=>{
+  document.getElementById("number").textContent = number;
+  document.getElementById("score").textContent = score;
+  document.getElementById("wins").textContent = wins;
+  document.getElementById("rounds").textContent = rounds;
+  document.getElementById("result").innerHTML = success
+    ? "정답! " + answer + "입니다<small>+120 포인트를 획득했습니다.</small>"
+    : "아쉽습니다. " + answer + "입니다<small>-80 포인트가 차감되었습니다.</small>";
 
-    const div=document.createElement("div")
-
-    div.innerHTML=
-    "<b>"+p.username+"</b>: "+p.content
-
-    posts.appendChild(div)
-
-  })
+  history.unshift({ round: rounds, pick: selected, number, answer, success });
+  renderHistory();
 }
 
-loadPosts()
-
+function renderHistory(){
+  const list = document.getElementById("history");
+  list.innerHTML = "";
+  history.slice(0, 6).forEach(item => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `<span>#${item.round} 선택 ${item.pick} · 숫자 ${item.number}</span><b class="${item.success ? "win" : "lose"}">${item.success ? "승" : "패"}</b>`;
+    list.appendChild(row);
+  });
+}
 </script>
-
 </body>
 </html>
