@@ -12,7 +12,7 @@
   <div class="auth" id="authLayer">
     <section class="modal" aria-labelledby="authTitle">
       <h2 id="authTitle">로그인 / 회원가입</h2>
-      <p class="muted">브라우저 저장소로 작동하는 데모입니다. 회원가입 시 30,000코인을 지급합니다.</p>
+      <p class="muted">서버의 data/users.json 파일에 계정과 코인을 저장합니다. 회원가입 시 30,000코인을 지급합니다.</p>
       <div class="tabs"><button class="tab active" id="loginTab">로그인</button><button class="tab" id="signupTab">회원가입</button></div>
       <form class="auth-form" id="authForm">
         <div class="field"><label for="userId">아이디</label><input id="userId" autocomplete="username" required></div>
@@ -59,32 +59,37 @@
     const DRAW_COOLDOWN = 10 * 60 * 60 * 1000;
     const suits = ["♠", "♥", "♦", "♣"];
     const values = [1,2,3,4,5,6,7,8,9,10];
-    const storeKey = "oddEvenCardUsers.v1";
     let mode = "login", currentUser = null, selectedChoice = null, activeBet = null, round = 1, remaining = ROUND_SECONDS, openCard, hiddenCard, timer;
     const $ = (id) => document.getElementById(id);
-    const users = () => JSON.parse(localStorage.getItem(storeKey) || "{}");
-    const saveUsers = (data) => localStorage.setItem(storeKey, JSON.stringify(data));
     const fmt = (n) => Number(n).toLocaleString("ko-KR");
-    function today(){return new Date().toISOString().slice(0,10)}
+    const today = () => new Date().toISOString().slice(0,10);
+    async function request(url, options = {}) {
+      const res = await fetch(url, { headers: { "Content-Type": "application/json" }, ...options });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "요청 처리 중 오류가 발생했습니다.");
+      return data;
+    }
+    async function patchUser(patch) {
+      const data = await request("/api/user", { method: "PATCH", body: JSON.stringify(patch) });
+      currentUser = data.user; renderUser(); return currentUser;
+    }
     function card(){return {value: values[Math.floor(Math.random()*values.length)], suit: suits[Math.floor(Math.random()*suits.length)]}}
     function renderCard(el, c, back=false){el.className = back ? "playing-card back" : `playing-card ${c.suit === "♥" || c.suit === "♦" ? "red" : ""}`; el.innerHTML = back ? '<div class="corner">?</div><div class="center">★</div><div class="corner bottom">?</div>' : `<div class="corner">${c.value}<br>${c.suit}</div><div class="center">${c.suit}</div><div class="corner bottom">${c.value}<br>${c.suit}</div>`}
-    function userData(){return users()[currentUser]}
-    function patchUser(patch){const data=users(); data[currentUser]={...data[currentUser],...patch}; saveUsers(data); renderUser()}
-    function renderUser(){if(!currentUser)return; const u=userData(); $("coinText").textContent=fmt(u.coins); $("profileName").textContent=currentUser; $("dailyText").textContent=`${u.dailyDate===today()?u.dailyCount:0}/7`; $("roundText").textContent=round; $("dailyBtn").disabled=u.dailyDate===today()&&u.dailyCount>=DAILY_LIMIT; $("drawBtn").disabled=Date.now()-(u.lastDraw||0)<DRAW_COOLDOWN}
+    function renderUser(){if(!currentUser)return; $("coinText").textContent=fmt(currentUser.coins); $("profileName").textContent=currentUser.id; $("dailyText").textContent=`${currentUser.dailyDate===today()?currentUser.dailyCount:0}/7`; $("roundText").textContent=round; $("dailyBtn").disabled=currentUser.dailyDate===today()&&currentUser.dailyCount>=DAILY_LIMIT; $("drawBtn").disabled=Date.now()-(currentUser.lastDraw||0)<DRAW_COOLDOWN}
     function setAuthMode(next){mode=next; $("loginTab").classList.toggle("active",mode==="login"); $("signupTab").classList.toggle("active",mode==="signup"); $("authSubmit").textContent=mode==="login"?"로그인":"회원가입"}
-    function login(name){currentUser=name; sessionStorage.setItem("oddEvenCurrentUser",name); $("authLayer").hidden=true; renderUser(); startRound()}
+    function enterGame(user){currentUser=user; $("authLayer").hidden=true; renderUser(); startRound()}
     function startRound(){clearInterval(timer); openCard=card(); hiddenCard=card(); activeBet=null; selectedChoice=null; remaining=ROUND_SECONDS; document.querySelectorAll(".choice").forEach(b=>b.classList.remove("active")); renderCard($("openCard"),openCard); renderCard($("hiddenCard"),hiddenCard,true); $("stateText").textContent="배팅중"; $("resultText").textContent="히든카드가 열리기 전까지 배팅할 수 있습니다."; $("timerText").textContent=remaining; $("betBtn").disabled=false; timer=setInterval(tick,1000); renderUser()}
     function tick(){remaining-=1; $("timerText").textContent=remaining; if(remaining<=0) reveal()}
-    function reveal(){clearInterval(timer); renderCard($("hiddenCard"),hiddenCard); const sum=openCard.value+hiddenCard.value; const result=sum%2===0?"even":"odd"; let message=`합계 ${sum} · ${result==="even"?"짝":"홀"}`; if(activeBet){const win=activeBet.choice===result; const delta=win?activeBet.amount*2:0; if(win) patchUser({coins:userData().coins+delta}); message += win ? ` · 적중! ${fmt(delta)}코인 획득` : ` · 실패, ${fmt(activeBet.amount)}코인 차감`; addHistory(result,sum,win)} else addHistory(result,sum,null); $("resultText").textContent=message; $("stateText").textContent="결과"; $("betBtn").disabled=true; setTimeout(()=>{round+=1; startRound()},4000)}
+    async function reveal(){clearInterval(timer); renderCard($("hiddenCard"),hiddenCard); const sum=openCard.value+hiddenCard.value; const result=sum%2===0?"even":"odd"; let message=`합계 ${sum} · ${result==="even"?"짝":"홀"}`; if(activeBet){const win=activeBet.choice===result; const delta=win?activeBet.amount*2:0; if(win) await patchUser({coins:currentUser.coins+delta}); message += win ? ` · 적중! ${fmt(delta)}코인 획득` : ` · 실패, ${fmt(activeBet.amount)}코인 차감`; addHistory(result,sum,win)} else addHistory(result,sum,null); $("resultText").textContent=message; $("stateText").textContent="결과"; $("betBtn").disabled=true; setTimeout(()=>{round+=1; startRound()},4000)}
     function addHistory(result,sum,win){const row=document.createElement("div"); row.className="history-row"; row.innerHTML=`<strong>#${round}</strong><span>${openCard.value}+${hiddenCard.value}=${sum} (${result==="even"?"짝":"홀"})</span><b>${win===null?"-":win?"승":"패"}</b>`; $("historyList").prepend(row)}
-    $("authForm").addEventListener("submit",e=>{e.preventDefault(); const id=$("userId").value.trim(); const pw=$("userPw").value; const data=users(); if(mode==="signup"){if(data[id]) return $("authMessage").textContent="이미 존재하는 아이디입니다."; data[id]={password:pw,coins:SIGNUP_BONUS,dailyDate:"",dailyCount:0,lastDraw:0}; saveUsers(data); login(id); return} if(!data[id]||data[id].password!==pw) return $("authMessage").textContent="아이디 또는 비밀번호가 올바르지 않습니다."; login(id)});
-    $("loginTab").onclick=()=>setAuthMode("login"); $("signupTab").onclick=()=>setAuthMode("signup"); $("logoutBtn").onclick=()=>{sessionStorage.removeItem("oddEvenCurrentUser"); location.reload()};
+    $("authForm").addEventListener("submit",async e=>{e.preventDefault(); const id=$("userId").value.trim(); const password=$("userPw").value; try{const data=await request(mode==="login"?"/api/login":"/api/signup",{method:"POST",body:JSON.stringify({id,password})}); enterGame(data.user)}catch(err){$("authMessage").textContent=err.message}});
+    $("loginTab").onclick=()=>setAuthMode("login"); $("signupTab").onclick=()=>setAuthMode("signup"); $("logoutBtn").onclick=async()=>{await request("/api/logout",{method:"POST",body:"{}"}); location.reload()};
     document.querySelectorAll(".choice").forEach(btn=>btn.onclick=()=>{selectedChoice=btn.dataset.choice; document.querySelectorAll(".choice").forEach(b=>b.classList.remove("active")); btn.classList.add("active")});
-    document.querySelectorAll("[data-chip]").forEach(btn=>btn.onclick=()=>$("betAmount").value=Number($("betAmount").value||0)+Number(btn.dataset.chip)); $("maxBtn").onclick=()=>$("betAmount").value=userData().coins;
-    $("betBtn").onclick=()=>{const amount=Math.floor(Number($("betAmount").value)); const u=userData(); if(!selectedChoice) return $("resultText").textContent="홀 또는 짝을 먼저 선택하세요."; if(activeBet) return $("resultText").textContent="이번 회차 배팅은 이미 확정되었습니다."; if(amount<100||amount>u.coins) return $("resultText").textContent="배팅 금액을 보유 코인 이하로 입력하세요."; patchUser({coins:u.coins-amount}); activeBet={choice:selectedChoice,amount}; $("resultText").textContent=`${selectedChoice==="even"?"짝":"홀"}에 ${fmt(amount)}코인 배팅 완료`; $("betBtn").disabled=true};
-    $("dailyBtn").onclick=()=>{const u=userData(); const count=u.dailyDate===today()?u.dailyCount:0; if(count>=DAILY_LIMIT)return; patchUser({coins:u.coins+DAILY_BONUS,dailyDate:today(),dailyCount:count+1})};
-    $("drawBtn").onclick=()=>{const u=userData(); if(Date.now()-(u.lastDraw||0)<DRAW_COOLDOWN)return; const prize=(Math.floor(Math.random()*10)+1)*10000; patchUser({coins:u.coins+prize,lastDraw:Date.now()}); $("resultText").textContent=`무료 뽑기 보상 ${fmt(prize)}코인을 받았습니다.`};
-    const saved=sessionStorage.getItem("oddEvenCurrentUser"); if(saved&&users()[saved]) login(saved); else $("authLayer").hidden=false;
+    document.querySelectorAll("[data-chip]").forEach(btn=>btn.onclick=()=>$("betAmount").value=Number($("betAmount").value||0)+Number(btn.dataset.chip)); $("maxBtn").onclick=()=>$("betAmount").value=currentUser.coins;
+    $("betBtn").onclick=async()=>{const amount=Math.floor(Number($("betAmount").value)); if(!selectedChoice) return $("resultText").textContent="홀 또는 짝을 먼저 선택하세요."; if(activeBet) return $("resultText").textContent="이번 회차 배팅은 이미 확정되었습니다."; if(amount<100||amount>currentUser.coins) return $("resultText").textContent="배팅 금액을 보유 코인 이하로 입력하세요."; await patchUser({coins:currentUser.coins-amount}); activeBet={choice:selectedChoice,amount}; $("resultText").textContent=`${selectedChoice==="even"?"짝":"홀"}에 ${fmt(amount)}코인 배팅 완료`; $("betBtn").disabled=true};
+    $("dailyBtn").onclick=async()=>{const count=currentUser.dailyDate===today()?currentUser.dailyCount:0; if(count>=DAILY_LIMIT)return; await patchUser({coins:currentUser.coins+DAILY_BONUS,dailyDate:today(),dailyCount:count+1})};
+    $("drawBtn").onclick=async()=>{if(Date.now()-(currentUser.lastDraw||0)<DRAW_COOLDOWN)return; const prize=(Math.floor(Math.random()*10)+1)*10000; await patchUser({coins:currentUser.coins+prize,lastDraw:Date.now()}); $("resultText").textContent=`무료 뽑기 보상 ${fmt(prize)}코인을 받았습니다.`};
+    request("/api/me").then(data=>data.user?enterGame(data.user):$("authLayer").hidden=false).catch(()=>$("authLayer").hidden=false);
   </script>
 </body>
 </html>
