@@ -80,13 +80,22 @@ async function api(req, res) {
     return json(res, 404, { error: 'API를 찾을 수 없습니다.' });
   } catch (error) { return json(res, 500, { error: error.message }); }
 }
+function sendFile(file, res) {
+  fs.readFile(file, (err, data) => {
+    if (err) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Not found'); }
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream' }); res.end(data);
+  });
+}
 function staticFile(req, res) {
-  const safePath = decodeURIComponent(req.url.split('?')[0] === '/' ? '/index.html' : req.url.split('?')[0]);
+  if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end('Method not allowed'); }
+  const requestPath = decodeURIComponent(req.url.split('?')[0]);
+  const safePath = requestPath === '/' ? '/index.html' : requestPath;
   const file = path.normalize(path.join(ROOT, safePath));
   if (!file.startsWith(ROOT) || file.startsWith(DATA_DIR)) { res.writeHead(403); return res.end('Forbidden'); }
-  fs.readFile(file, (err, data) => {
-    if (err) { res.writeHead(404); return res.end('Not found'); }
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream' }); res.end(data);
+  fs.access(file, fs.constants.R_OK, (err) => {
+    if (!err) return sendFile(file, res);
+    if (!path.extname(requestPath)) return sendFile(path.join(ROOT, 'index.html'), res);
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('Not found');
   });
 }
 http.createServer((req, res) => req.url.startsWith('/api/') ? api(req, res) : staticFile(req, res)).listen(PORT, () => {

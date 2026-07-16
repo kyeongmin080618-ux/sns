@@ -1,0 +1,12 @@
+{
+  "name": "odd-even-card-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "60-second odd/even card betting game with JSON file persistence.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
